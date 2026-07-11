@@ -1,0 +1,258 @@
+// Prisma schema for Pet Store Kuwait admin dashboard
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("STAFF") // OWNER | MANAGER | STAFF
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  activityLogs ActivityLog[]
+}
+
+model Customer {
+  id          String   @id @default(cuid())
+  name        String
+  email       String?  @unique
+  phone       String   @unique
+  addresses   String?  // JSON array
+  totalOrders Int      @default(0)
+  totalSpent  Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      Order[]
+}
+
+model Branch {
+  id                String   @id @default(cuid())
+  name              String
+  nameAr            String
+  address           String
+  addressAr         String
+  phone             String   // JSON array
+  hours             String
+  hoursAr           String
+  lat               Float
+  lng               Float
+  active            Boolean  @default(true)
+  deliveryAvailable Boolean  @default(true)
+  pickupAvailable   Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  orders            Order[]
+  deliveryZones     DeliveryZone[]
+  branchStocks      BranchStock[]
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  name      String
+  nameAr    String
+  petType   String    // cats | dogs | birds | fish | rabbits | hamsters | reptiles | general
+  image     String?
+  order     Int       @default(0)
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+}
+
+model Product {
+  id                 String          @id @default(cuid())
+  slug               String          @unique
+  name               String
+  nameAr             String
+  description        String?
+  descriptionAr      String?
+  price              Float
+  originalPrice      Float?
+  sku                String?         @unique
+  stock              Int             @default(0)
+  lowStockThreshold  Int             @default(5)
+  petType            String
+  featured           Boolean         @default(false)
+  active             Boolean         @default(true)
+  hasVariants        Boolean         @default(false)
+  rating             Float           @default(4.5)
+  reviewCount        Int             @default(0)
+  categoryId         String
+  category           Category        @relation(fields: [categoryId], references: [id])
+  images             ProductImage[]
+  variants           Variant[]
+  orderItems         OrderItem[]
+  inventoryLogs      InventoryLog[]
+  branchStocks       BranchStock[]
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Variant {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String
+  sku       String?
+  price     Float
+  stock     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orderItems OrderItem[]
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  customerId      String
+  customer        Customer    @relation(fields: [customerId], references: [id])
+  branchId        String?
+  branch          Branch?     @relation(fields: [branchId], references: [id])
+  status          String      @default("pending") // pending | confirmed | preparing | ready | out_for_delivery | delivered | cancelled
+  paymentStatus   String      @default("pending") // pending | paid | failed | refunded
+  paymentMethod   String      @default("knet") // knet | credit-card | apple-pay | google-pay | cod
+  deliveryMethod  String      @default("delivery") // delivery | pickup
+  subtotal        Float
+  deliveryFee     Float       @default(0)
+  discount        Float       @default(0)
+  total           Float
+  address         String?     // JSON: {area, street, building, floor, apartment, landmark}
+  notes           String?
+  promotionCode   String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  items           OrderItem[]
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id])
+  variantId String?
+  variant   Variant? @relation(fields: [variantId], references: [id])
+  name      String
+  nameAr    String?
+  price     Float
+  quantity  Int
+  image     String?
+  createdAt DateTime @default(now())
+}
+
+model InventoryLog {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  change    Int
+  reason    String   // sale | restock | adjustment | return
+  orderId   String?
+  createdAt DateTime @default(now())
+}
+
+model Promotion {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  type        String   // PERCENT | FIXED
+  value       Float
+  minOrder    Float    @default(0)
+  active      Boolean  @default(true)
+  startsAt    DateTime?
+  expiresAt   DateTime?
+  usageLimit  Int?
+  usedCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model DeliveryZone {
+  id            String   @id @default(cuid())
+  branchId      String
+  branch        Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  name          String
+  fee           Float    @default(0)
+  minOrder      Float    @default(0)
+  estimatedTime String   // e.g. "30-60 min"
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model BranchStock {
+  id        String   @id @default(cuid())
+  branchId  String
+  branch    Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  stock     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([branchId, productId])
+}
+
+model Setting {
+  key       String   @id
+  value     String   // JSON
+  updatedAt DateTime @updatedAt
+}
+
+model ContentBlock {
+  key       String   @id
+  value     String   // JSON
+  updatedAt DateTime @updatedAt
+}
+
+model Banner {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String?
+  imageUrl  String
+  link      String?
+  position  String   @default("hero") // hero | secondary
+  active    Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  type      String   // order | stock | system
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      AdminUser @relation(fields: [userId], references: [id])
+  action    String
+  entity    String?
+  entityId  String?
+  details   String?
+  createdAt DateTime @default(now())
+}

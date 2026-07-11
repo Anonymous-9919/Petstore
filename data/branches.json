@@ -1,0 +1,38 @@
+[
+  {
+    "id": "salmiya",
+    "name": "Salmiya (City Centre)",
+    "nameAr": "السالمية (سيتي سنتر)",
+    "address": "Inside City Centre Salmiya (Souk Salmiya), Outside Stores, Hawalli Governorate, Kuwait",
+    "addressAr": "بinside سيتي سنتر السالمية (سوق السالمية)، بالمحلات الخارجية، محافظة حولي، الكويت",
+    "phone": ["+965 22207053", "+965 98805010"],
+    "hours": "Daily 10:00 AM - 10:00 PM",
+    "hoursAr": "يومياً من 10:00 صباحاً حتى 10:00 مساءً",
+    "lat": 29.3385,
+    "lng": 48.0799
+  },
+  {
+    "id": "alrai",
+    "name": "Al Rai",
+    "nameAr": "الري",
+    "address": "Block 1, Street 39, Al Rai, Kuwait",
+    "addressAr": "الكويت، الفروانية، الري، بلوك 1، شارع 39",
+    "phone": ["+965 22207053", "+965 98805010"],
+    "hours": "Daily 10:00 AM - 10:00 PM",
+    "hoursAr": "يومياً من 10:00 صباحاً حتى 10:00 مساءً",
+    "lat": 29.29,
+    "lng": 47.96
+  },
+  {
+    "id": "mahboula",
+    "name": "Mahboula",
+    "nameAr": "المهبولة",
+    "address": "Mahboula, Al Ahmadi Governorate, Kuwait",
+    "addressAr": "المهبولة، محافظة الأحمدي، الكويت",
+    "phone": ["+965 98805010"],
+    "hours": "Daily 10:00 AM - 10:00 PM",
+    "hoursAr": "يومياً من 10:00 صباحاً حتى 10:00 مساءً",
+    "lat": 29.139,
+    "lng": 48.1151
+  }
+]

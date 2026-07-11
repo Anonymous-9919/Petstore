@@ -1,0 +1,281 @@
+[
+  {
+    "id": "special-offer",
+    "name": "Special Offer",
+    "nameAr": "عرض خاص",
+    "slug": "special-offer",
+    "petType": "general",
+    "count": 78,
+    "image": "/images/categories/special-offer.jpg"
+  },
+  {
+    "id": "cat-wet-food",
+    "name": "Cat Wet Food",
+    "nameAr": "طعام رطب للقطط",
+    "slug": "cat-wet-food",
+    "petType": "cats",
+    "count": 43,
+    "image": "/images/categories/cat-wet-food.jpg"
+  },
+  {
+    "id": "dog-wet-food",
+    "name": "Dog Wet Food",
+    "nameAr": "طعام رطب للكلاب",
+    "slug": "dog-wet-food",
+    "petType": "dogs",
+    "count": 10,
+    "image": "/images/categories/dog-wet-food.jpg"
+  },
+  {
+    "id": "cat-dry-food",
+    "name": "Cat Dry Food",
+    "nameAr": "الطعام الجاف للقطط",
+    "slug": "cat-dry-food",
+    "petType": "cats",
+    "count": 27,
+    "image": "/images/categories/cat-dry-food.jpg"
+  },
+  {
+    "id": "dog-dry-food",
+    "name": "Dog Dry Food",
+    "nameAr": "الطعام الجاف للكلاب ",
+    "slug": "dog-dry-food",
+    "petType": "dogs",
+    "count": 7,
+    "image": "/images/categories/dog-dry-food.jpg"
+  },
+  {
+    "id": "cat-treats",
+    "name": "Cat Treats",
+    "nameAr": "مكافأت القطط",
+    "slug": "cat-treats",
+    "petType": "cats",
+    "count": 20,
+    "image": "/images/categories/cat-treats.jpg"
+  },
+  {
+    "id": "dog-treats",
+    "name": "Dog Treats",
+    "nameAr": "وجبات مكافأة للكلاب ",
+    "slug": "dog-treats",
+    "petType": "dogs",
+    "count": 1,
+    "image": "/images/categories/dog-treats.jpg"
+  },
+  {
+    "id": "pets-carrier-travel-bags",
+    "name": "Pets Carrier & Travel Bags",
+    "nameAr": "شنط واقفاص الحيوانات الأليفة ",
+    "slug": "pets-carrier-travel-bags",
+    "petType": "general",
+    "count": 3,
+    "image": "/images/categories/pets-carrier-travel-bags.jpg"
+  },
+  {
+    "id": "cat-litter-and-boxes",
+    "name": "Cat Litter and Boxes",
+    "nameAr": "تراب وصناديق للقطط",
+    "slug": "cat-litter-and-boxes",
+    "petType": "cats",
+    "count": 30,
+    "image": "/images/categories/cat-litter-and-boxes.jpg"
+  },
+  {
+    "id": "pet-beds-houses",
+    "name": "Pet Beds & Houses",
+    "nameAr": "منزل وسرائر الحيوانات الأليفة ",
+    "slug": "pet-beds-houses",
+    "petType": "general",
+    "count": 11,
+    "image": "/images/categories/pet-beds-houses.jpg"
+  },
+  {
+    "id": "cat-accessories",
+    "name": "Cat Accessories",
+    "nameAr": "اكسسوارات القطط",
+    "slug": "cat-accessories",
+    "petType": "cats",
+    "count": 42,
+    "image": "/images/categories/cat-accessories.jpg"
+  },
+  {
+    "id": "dog-accessories",
+    "name": "Dog Accessories",
+    "nameAr": "اكسسوارات الكلاب",
+    "slug": "dog-accessories",
+    "petType": "dogs",
+    "count": 28,
+    "image": "/images/categories/dog-accessories.jpg"
+  },
+  {
+    "id": "healthcare-supplements",
+    "name": "Healthcare & Supplements",
+    "nameAr": "الرعاية الصحية والمكملات الغذائية ",
+    "slug": "healthcare-supplements",
+    "petType": "general",
+    "count": 5,
+    "image": "/images/categories/healthcare-supplements.jpg"
+  },
+  {
+    "id": "grooming-hygiene",
+    "name": "Grooming & Hygiene",
+    "nameAr": "الحلاقة والنظافة",
+    "slug": "grooming-hygiene",
+    "petType": "general",
+    "count": 72,
+    "image": "/images/categories/grooming-hygiene.jpg"
+  },
+  {
+    "id": "cat-scratchers",
+    "name": "Cat Scratchers",
+    "nameAr": "خداشات القطط",
+    "slug": "cat-scratchers",
+    "petType": "cats",
+    "count": 3,
+    "image": "/images/categories/cat-scratchers.jpg"
+  },
+  {
+    "id": "pet-cage",
+    "name": "Pet Cage",
+    "nameAr": "أقفاص الحيوانات الأليفة ",
+    "slug": "pet-cage",
+    "petType": "general",
+    "count": 1,
+    "image": "/images/categories/pet-cage.jpg"
+  },
+  {
+    "id": "cat-toys",
+    "name": "Cat Toys",
+    "nameAr": "ألعاب القطط",
+    "slug": "cat-toys",
+    "petType": "cats",
+    "count": 17,
+    "image": "/images/categories/cat-toys.jpg"
+  },
+  {
+    "id": "pet-milk",
+    "name": "Pet Milk",
+    "nameAr": "حليب القطط",
+    "slug": "pet-milk",
+    "petType": "cats",
+    "count": 4,
+    "image": "/images/categories/pet-milk.jpg"
+  },
+  {
+    "id": "dog-toys",
+    "name": "Dog Toys",
+    "nameAr": "ألعاب الكلاب",
+    "slug": "dog-toys",
+    "petType": "dogs",
+    "count": 7,
+    "image": "/images/categories/dog-toys.jpg"
+  },
+  {
+    "id": "bird-food",
+    "name": "Bird Food",
+    "nameAr": "طعام الطيور",
+    "slug": "bird-food",
+    "petType": "birds",
+    "count": 10,
+    "image": "/images/categories/bird-food.jpg"
+  },
+  {
+    "id": "bird-toys",
+    "name": "Bird Toys",
+    "nameAr": "ألعاب الطيور",
+    "slug": "bird-toys",
+    "petType": "birds",
+    "count": 4,
+    "image": "/images/categories/bird-toys.jpg"
+  },
+  {
+    "id": "bird-cage",
+    "name": "Bird Cage",
+    "nameAr": "قفص الطيور والحامل",
+    "slug": "bird-cage",
+    "petType": "birds",
+    "count": 5,
+    "image": "/images/categories/bird-cage.jpg"
+  },
+  {
+    "id": "bird-needs-accessories",
+    "name": "Bird Needs & Accessories",
+    "nameAr": "اكسسوارات واحتياجات الطيور",
+    "slug": "bird-needs-accessories",
+    "petType": "birds",
+    "count": 22,
+    "image": "/images/categories/bird-needs-accessories.jpg"
+  },
+  {
+    "id": "rabbit-food",
+    "name": "Rabbit Food",
+    "nameAr": "غذاء الأرانب",
+    "slug": "rabbit-food",
+    "petType": "rabbits",
+    "count": 1,
+    "image": "/images/categories/rabbit-food.jpg"
+  },
+  {
+    "id": "rabbit-needs-accessories",
+    "name": "Rabbit Needs & Accessories",
+    "nameAr": "احتياجات واكسسوارات الأرانب ",
+    "slug": "rabbit-needs-accessories",
+    "petType": "rabbits",
+    "count": 2,
+    "image": "/images/categories/rabbit-needs-accessories.jpg"
+  },
+  {
+    "id": "fish-food",
+    "name": "Fish Food",
+    "nameAr": "طعام الأسماك ",
+    "slug": "fish-food",
+    "petType": "fish",
+    "count": 5,
+    "image": "/images/categories/fish-food.jpg"
+  },
+  {
+    "id": "fish-needs-accessories",
+    "name": "Fish Needs & Accessories",
+    "nameAr": "احتياجات واكسسوارات الأسماك ",
+    "slug": "fish-needs-accessories",
+    "petType": "fish",
+    "count": 14,
+    "image": "/images/categories/fish-needs-accessories.jpg"
+  },
+  {
+    "id": "hamster-needs-accessories",
+    "name": "Hamster Needs & Accessories",
+    "nameAr": "احتياجات واكسسوارات الهامستر ",
+    "slug": "hamster-needs-accessories",
+    "petType": "hamsters",
+    "count": 1,
+    "image": "/images/categories/hamster-needs-accessories.jpg"
+  },
+  {
+    "id": "hamster-food-1",
+    "name": "Hamster Food",
+    "nameAr": "طعام الهامستر",
+    "slug": "hamster-food-1",
+    "petType": "hamsters",
+    "count": 1,
+    "image": "/images/categories/hamster-food-1.jpg"
+  },
+  {
+    "id": "reptile-food",
+    "name": "Reptile Food",
+    "nameAr": "طعام الزواحف",
+    "slug": "reptile-food",
+    "petType": "reptiles",
+    "count": 4,
+    "image": "/images/categories/reptile-food.jpg"
+  },
+  {
+    "id": "reptile-needs-accessories",
+    "name": "Reptile Needs & Accessories",
+    "nameAr": "احتياجات واكسسوارات الزواحف",
+    "slug": "reptile-needs-accessories",
+    "petType": "reptiles",
+    "count": 0,
+    "image": "/images/categories/reptile-needs-accessories.jpg"
+  }
+]

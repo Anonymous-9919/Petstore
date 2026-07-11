@@ -1,0 +1,219 @@
+[
+  {
+    "id": "special-offer",
+    "title": "Special Offer",
+    "titleAr": "عرض خاص",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/ec/d7/ecd73fd4efada4e3266a75759272721f.jpg",
+    "href": "/products?category=special-offer"
+  },
+  {
+    "id": "cat-wet-food",
+    "title": "Cat Wet Food",
+    "titleAr": "طعام رطب للقطط",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/59/59/59596b28fb085039f21e4f4e90761496.jpg",
+    "href": "/products?category=cat-wet-food"
+  },
+  {
+    "id": "dog-wet-food",
+    "title": "Dog Wet Food",
+    "titleAr": "طعام رطب للكلاب",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/da/69/da69c1303e3501c3a50a94efbb616a6e.jpg",
+    "href": "/products?category=dog-wet-food"
+  },
+  {
+    "id": "cat-dry-food",
+    "title": "Cat Dry Food",
+    "titleAr": "الطعام الجاف للقطط",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/35/d3/35d35d047ac1e52accffaaa700f7e84c.jpg",
+    "href": "/products?category=cat-dry-food"
+  },
+  {
+    "id": "dog-dry-food",
+    "title": "Dog Dry Food",
+    "titleAr": "الطعام الجاف للكلاب ",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/47/66/4766c6215a4d3334668e887f4bebe060.jpg",
+    "href": "/products?category=dog-dry-food"
+  },
+  {
+    "id": "cat-treats",
+    "title": "Cat Treats",
+    "titleAr": "مكافأت القطط",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/0f/c4/0fc4bd9630a86c50a996814d13286fb3.jpg",
+    "href": "/products?category=cat-treats"
+  },
+  {
+    "id": "dog-treats",
+    "title": "Dog Treats",
+    "titleAr": "وجبات مكافأة للكلاب ",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/9f/7a/9f7aff813fdfd727204e3d83467ff1ff.jpg",
+    "href": "/products?category=dog-treats"
+  },
+  {
+    "id": "pets-carrier-travel-bags",
+    "title": "Pets Carrier & Travel Bags",
+    "titleAr": "شنط واقفاص الحيوانات الأليفة ",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/33/2f/332f590bfdf458c1667edf1917d5e350.jpg",
+    "href": "/products?category=pets-carrier-travel-bags"
+  },
+  {
+    "id": "cat-litter-and-boxes",
+    "title": "Cat Litter and Boxes",
+    "titleAr": "تراب وصناديق للقطط",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/30/56/3056ada91cc83505a05566cdf9cb66ed.jpg",
+    "href": "/products?category=cat-litter-and-boxes"
+  },
+  {
+    "id": "pet-beds-houses",
+    "title": "Pet Beds & Houses",
+    "titleAr": "منزل وسرائر الحيوانات الأليفة ",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/0e/9c/0e9c1d175aa2e1c7d527d4572bf68e6e.jpg",
+    "href": "/products?category=pet-beds-houses"
+  },
+  {
+    "id": "cat-accessories",
+    "title": "Cat Accessories",
+    "titleAr": "اكسسوارات القطط",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/f1/14/f1146ce523807a33ba2d9c39d5d6c2a6.jpg",
+    "href": "/products?category=cat-accessories"
+  },
+  {
+    "id": "dog-accessories",
+    "title": "Dog Accessories",
+    "titleAr": "اكسسوارات الكلاب",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/a4/f1/a4f16964f2fc044c3a0353a72c37a87f.jpg",
+    "href": "/products?category=dog-accessories"
+  },
+  {
+    "id": "healthcare-supplements",
+    "title": "Healthcare & Supplements",
+    "titleAr": "الرعاية الصحية والمكملات الغذائية ",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/28/6e/286ef45e8bb0793d95790f51cd17662c.jpg",
+    "href": "/products?category=healthcare-supplements"
+  },
+  {
+    "id": "grooming-hygiene",
+    "title": "Grooming & Hygiene",
+    "titleAr": "الحلاقة والنظافة",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/c2/3d/c23d025fccef7f0a223c387c33748100.jpg",
+    "href": "/products?category=grooming-hygiene"
+  },
+  {
+    "id": "cat-scratchers",
+    "title": "Cat Scratchers",
+    "titleAr": "خداشات القطط",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/9f/44/9f4469a885de8235cb6fb4f9a7ca1edb.jpg",
+    "href": "/products?category=cat-scratchers"
+  },
+  {
+    "id": "pet-cage",
+    "title": "Pet Cage",
+    "titleAr": "أقفاص الحيوانات الأليفة ",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/09/32/0932f5519979a27078b677f457b6ca70.jpg",
+    "href": "/products?category=pet-cage"
+  },
+  {
+    "id": "cat-toys",
+    "title": "Cat Toys",
+    "titleAr": "ألعاب القطط",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/9b/a6/9ba614efa8ca3cb869f069198e3807dd.jpg",
+    "href": "/products?category=cat-toys"
+  },
+  {
+    "id": "pet-milk",
+    "title": "Pet Milk",
+    "titleAr": "حليب القطط",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/36/c3/36c3f6ae19a82284b6caee1ddb1b62dd.jpg",
+    "href": "/products?category=pet-milk"
+  },
+  {
+    "id": "dog-toys",
+    "title": "Dog Toys",
+    "titleAr": "ألعاب الكلاب",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/a0/d6/a0d60277858fb8f377d2b29d59972394.jpg",
+    "href": "/products?category=dog-toys"
+  },
+  {
+    "id": "bird-food",
+    "title": "Bird Food",
+    "titleAr": "طعام الطيور",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/31/23/31231c44f8756786387243f79d08128c.jpg",
+    "href": "/products?category=bird-food"
+  },
+  {
+    "id": "bird-toys",
+    "title": "Bird Toys",
+    "titleAr": "ألعاب الطيور",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/f6/20/f62058c693eaca0d92dc230971e5bf68.jpg",
+    "href": "/products?category=bird-toys"
+  },
+  {
+    "id": "bird-cage",
+    "title": "Bird Cage",
+    "titleAr": "قفص الطيور والحامل",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/e6/90/e6901adf47b2df41816fb72eb8d9213d.jpg",
+    "href": "/products?category=bird-cage"
+  },
+  {
+    "id": "bird-needs-accessories",
+    "title": "Bird Needs & Accessories",
+    "titleAr": "اكسسوارات واحتياجات الطيور",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/e9/18/e918bd4bc38847d6f4f265e519f0d0e9.jpg",
+    "href": "/products?category=bird-needs-accessories"
+  },
+  {
+    "id": "rabbit-food",
+    "title": "Rabbit Food",
+    "titleAr": "غذاء الأرانب",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/f2/43/f243861ea6f5eff46193e95c812dc2ba.jpg",
+    "href": "/products?category=rabbit-food"
+  },
+  {
+    "id": "rabbit-needs-accessories",
+    "title": "Rabbit Needs & Accessories",
+    "titleAr": "احتياجات واكسسوارات الأرانب ",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/a9/a7/a9a7ff78e4175b9f50e62294b8d6c52d.jpg",
+    "href": "/products?category=rabbit-needs-accessories"
+  },
+  {
+    "id": "fish-food",
+    "title": "Fish Food",
+    "titleAr": "طعام الأسماك ",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/be/88/be886cfa571ac27b13b8a86e364aef3d.jpg",
+    "href": "/products?category=fish-food"
+  },
+  {
+    "id": "fish-needs-accessories",
+    "title": "Fish Needs & Accessories",
+    "titleAr": "احتياجات واكسسوارات الأسماك ",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/e3/6b/e36b82b9e588a8507f6e644b474a5401.jpg",
+    "href": "/products?category=fish-needs-accessories"
+  },
+  {
+    "id": "hamster-needs-accessories",
+    "title": "Hamster Needs & Accessories",
+    "titleAr": "احتياجات واكسسوارات الهامستر ",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/23/96/2396f0512cfd9ecdb05966e78dd4e008.jpg",
+    "href": "/products?category=hamster-needs-accessories"
+  },
+  {
+    "id": "hamster-food-1",
+    "title": "Hamster Food",
+    "titleAr": "طعام الهامستر",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/b8/9e/b89eb92ea228ff08b149c0ad19116253.jpg",
+    "href": "/products?category=hamster-food-1"
+  },
+  {
+    "id": "reptile-food",
+    "title": "Reptile Food",
+    "titleAr": "طعام الزواحف",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/9e/d1/9ed1682588b0d6a1e0a2d7754dcd9f07.jpg",
+    "href": "/products?category=reptile-food"
+  },
+  {
+    "id": "reptile-needs-accessories",
+    "title": "Reptile Needs & Accessories",
+    "titleAr": "احتياجات واكسسوارات الزواحف",
+    "image": "https://tapcom-live.ams3.cdn.digitaloceanspaces.com/media/cache/a2/bb/a2bb3d65d4702c825ec5cbb11cf88734.jpg",
+    "href": "/products?category=reptile-needs-accessories"
+  }
+]

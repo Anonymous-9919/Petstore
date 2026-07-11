@@ -1,0 +1,16 @@
+node_modules/
+.vercel/
+.env*
+*.local
+.next/
+.next
+tsconfig.tsbuildinfo
+
+.vercel
+data/*.bak
+data/products.json.bak
+dev-server.log
+test-*.mjs
+public/uploads/
+prisma/dev.db
+prisma/dev.db-journal
