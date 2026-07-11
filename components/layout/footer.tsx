@@ -160,7 +160,7 @@ export default function Footer({ locale = "en" }: { locale?: Locale }) {
               ))}
             </ul>
             <p className="mt-4 text-xs text-gray-500">
-              {t("footer.workingHours", locale)}: 10AM - 10PM
+              {t("footer.workingHours", locale)}
             </p>
           </div>
         </div>
@@ -170,8 +170,7 @@ export default function Footer({ locale = "en" }: { locale?: Locale }) {
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <p className="text-xs text-gray-500 text-center">
-            &copy; {new Date().getFullYear()} Pet Store Kuwait. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} Pet Store Kuwait. {t("footer.all-rights", locale)}
           </p>
         </div>
       </div>

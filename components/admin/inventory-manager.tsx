@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Download, Upload, AlertTriangle, Package, TrendingDown, Edit, Check, X, Search, ChevronDown, ChevronUp, Info, FileText } from "@/lib/icons";
+import { formatKWD } from "@/lib/utils";
 
 interface Product {
   id: string;
@@ -55,8 +56,6 @@ export function InventoryManager({ initial }: { initial: Product[] }) {
   const [sortAsc, setSortAsc] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
-
-  const formatKWD = (n: number) => `${n.toFixed(3)} KWD`;
 
   const handleExport = async (type: "inventory" | "products") => {
     window.location.href = `/api/admin/export?type=${type}`;

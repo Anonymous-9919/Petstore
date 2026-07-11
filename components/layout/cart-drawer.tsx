@@ -18,7 +18,6 @@ export default function CartDrawer() {
   const items = useCartStore((s) => s.items);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
-  const clearCart = useCartStore((s) => s.clearCart);
 
   const subtotal = items.reduce((acc, i) => acc + i.price * i.quantity, 0);
   const itemCount = items.reduce((acc, i) => acc + i.quantity, 0);

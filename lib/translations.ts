@@ -361,6 +361,22 @@ export const translations: Record<string, { en: string; ar: string }> = {
   "aria.close": { en: "Close", ar: "إغلاق" },
   "aria.open-cart": { en: "Open cart", ar: "فتح السلة" },
 
+  // Checkout
+  "checkout.cash-on-delivery": { en: "Cash on Delivery", ar: "الدفع عند الاستلام" },
+  "checkout.cod-desc": { en: "Pay when you receive", ar: "ادفع عند استلام طلبك" },
+
+  // WhatsApp
+  "whatsapp.chat": { en: "Chat with us", ar: "تحدث معنا" },
+  "whatsapp.message": { en: "Hi! I'd like to know more about your pet products.", ar: "مرحباً! أريد معرفة المزيد عن منتجاتكم." },
+
+  // Order
+  "order.step-1-desc": { en: "Your payment will be verified shortly", ar: "سيتم التحقق من عملية الدفع الخاصة بك" },
+  "order.step-2-desc": { en: "We'll prepare your order with care", ar: "سنحضر طلبك بعناية" },
+  "order.step-3-desc": { en: "We'll send you a confirmation via email", ar: "سنرسل لك تأكيداً عبر البريد الإلكتروني" },
+
+  // Contact
+  "contact.success": { en: "Your message has been sent successfully! We'll get back to you soon.", ar: "تم إرسال رسالتك بنجاح! سنتواصل معك قريباً." },
+
   // Lang
   "lang.en": { en: "EN", ar: "EN" },
   "lang.ar": { en: "AR", ar: "AR" },

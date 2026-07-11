@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { slugify } from "@/lib/utils";
 import { z } from "zod";
 
 const productSchema = z.object({
@@ -20,10 +21,6 @@ const productSchema = z.object({
   categoryId: z.string().min(1),
   images: z.array(z.string()).default([]),
 });
-
-function slugify(s: string) {
-  return s.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").slice(0, 100);
-}
 
 export async function POST(req: Request) {
   const session = await getSession();

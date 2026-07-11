@@ -2,11 +2,11 @@
 
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { useLocale } from "@/lib/locale";
+import { t } from "@/lib/translations";
 
 const WHATSAPP_NUMBER = "96598805010";
-const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-  "Hi! I'd like to know more about your pet products."
-)}`;
+const WHATSAPP_MESSAGE = "Hi! I'd like to know more about your pet products.";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -24,6 +24,11 @@ function WhatsAppIcon({ className }: { className?: string }) {
 export function WhatsAppButton() {
   const [visible, setVisible] = useState(false);
   const [pulse, setPulse] = useState(true);
+  const { locale } = useLocale();
+
+  const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+    t("whatsapp.message", locale)
+  )}`;
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 500);
@@ -75,7 +80,7 @@ export function WhatsAppButton() {
 
       {/* Tooltip */}
       <span className="absolute right-full mr-3 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-gray-900 text-white text-sm font-medium px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
-        Chat with us
+        {t("whatsapp.chat", locale)}
       </span>
     </motion.a>
   );

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { slugify } from "@/lib/utils";
 import { z } from "zod";
 
 const branchSchema = z.object({
@@ -18,10 +19,6 @@ const branchSchema = z.object({
   deliveryAvailable: z.boolean().default(true),
   pickupAvailable: z.boolean().default(true),
 });
-
-function slugify(s: string) {
-  return s.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").slice(0, 50);
-}
 
 export async function POST(req: Request) {
   const session = await getSession();

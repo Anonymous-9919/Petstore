@@ -177,16 +177,6 @@
   margin-left: 2rem;
 }
 
-[dir="rtl"] .ml-auto {
-  margin-left: unset;
-  margin-right: auto;
-}
-
-[dir="rtl"] .mr-auto {
-  margin-right: unset;
-  margin-left: auto;
-}
-
 [dir="rtl"] .pl-0 {
   padding-left: unset;
   padding-right: 0;

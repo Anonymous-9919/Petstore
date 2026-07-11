@@ -1,11 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { slugify } from "@/lib/utils";
 import { toCSV } from "@/lib/csv";
-
-function slugify(s: string) {
-  return s.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").slice(0, 30);
-}
 
 export async function GET(req: Request) {
   const session = await getSession();

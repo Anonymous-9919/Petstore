@@ -200,7 +200,7 @@ export default function CheckoutPage() {
                   { id: "credit-card" as const, label: t("checkout.credit-card", locale), sub: t("checkout.credit-desc", locale), icon: <CreditCard className="w-6 h-6" /> },
                   { id: "apple-pay" as const, label: t("checkout.apple-pay", locale), sub: t("checkout.apple-pay-desc", locale), icon: <span className="text-lg">🍎</span> },
                   { id: "google-pay" as const, label: t("checkout.google-pay", locale), sub: t("checkout.google-pay-desc", locale), icon: <span className="text-lg">🌐</span> },
-                  { id: "cod" as const, label: "Cash on Delivery", sub: "Pay when you receive", icon: <span className="text-lg">💵</span> },
+                  { id: "cod" as const, label: t("checkout.cash-on-delivery", locale), sub: t("checkout.cod-desc", locale), icon: <span className="text-lg">💵</span> },
                 ].map((method) => (
                   <button key={method.id} onClick={() => setSelectedPayment(method.id)} className={`p-4 rounded-xl border-2 transition-all text-left ${selectedPayment === method.id ? "border-[#ff6600] bg-[#ff6600]/5" : "border-gray-200 hover:border-gray-300"}`}>
                     <div className="flex items-center gap-3">

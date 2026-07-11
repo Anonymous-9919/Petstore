@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { formatKWD } from "@/lib/utils";
+import { formatKWD, statusColors } from "@/lib/utils";
 import Link from "next/link";
 import { DollarSign, ShoppingCart, Users, Package, AlertTriangle, TrendingUp, Plus, Tags, BarChart3, FileText } from "@/lib/icons";
 import { StatCard } from "@/components/admin/stat-card";
@@ -33,16 +33,6 @@ export default async function DashboardPage() {
       }),
       prisma.order.count({ where: { status: { in: ["pending", "confirmed"] } } }),
     ]);
-
-  const statusColors: Record<string, string> = {
-    pending: "bg-yellow-100 text-yellow-700",
-    confirmed: "bg-blue-100 text-blue-700",
-    preparing: "bg-indigo-100 text-indigo-700",
-    ready: "bg-purple-100 text-purple-700",
-    out_for_delivery: "bg-cyan-100 text-cyan-700",
-    delivered: "bg-green-100 text-green-700",
-    cancelled: "bg-red-100 text-red-700",
-  };
 
   const quickActions = [
     { href: "/admin/products/new", label: "Add Product", icon: Plus, color: "bg-[#ff6600] hover:bg-[#e55b00]" },

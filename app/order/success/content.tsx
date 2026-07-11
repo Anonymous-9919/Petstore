@@ -25,9 +25,9 @@ export default function OrderSuccessContent() {
   }, [orderId]);
 
   const steps = [
-    { icon: <CreditCard className="w-5 h-5" />, title: t("order.next-1", locale), desc: locale === "ar" ? "سيتم التحقق من عملية الدفع الخاصة بك" : "Your payment will be verified shortly" },
-    { icon: <Package className="w-5 h-5" />, title: t("order.next-2", locale), desc: locale === "ar" ? "سنحضر طلبك بعناية" : "We'll prepare your order with care" },
-    { icon: <Bell className="w-5 h-5" />, title: t("order.next-3", locale), desc: locale === "ar" ? "سنرسل لك تأكيداً عبر البريد الإلكتروني" : "We'll send you a confirmation via email" },
+    { icon: <CreditCard className="w-5 h-5" />, title: t("order.next-1", locale), desc: t("order.step-1-desc", locale) },
+    { icon: <Package className="w-5 h-5" />, title: t("order.next-2", locale), desc: t("order.step-2-desc", locale) },
+    { icon: <Bell className="w-5 h-5" />, title: t("order.next-3", locale), desc: t("order.step-3-desc", locale) },
   ];
 
   return (

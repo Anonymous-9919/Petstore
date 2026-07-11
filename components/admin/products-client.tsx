@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Edit, Copy, Trash2, Search, Star } from "@/lib/icons";
+import { formatKWD } from "@/lib/utils";
 
 interface ProductRow {
   id: string;
@@ -33,8 +34,6 @@ export function ProductsClient({ products, total, currentPage, totalPages, searc
   const router = useRouter();
   const [deleting, setDeleting] = useState<string | null>(null);
   const [duplicating, setDuplicating] = useState<string | null>(null);
-
-  const formatKWD = (n: number) => `${n.toFixed(3)} KWD`;
 
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;

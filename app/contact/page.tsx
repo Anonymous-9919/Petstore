@@ -70,7 +70,7 @@ export default function ContactPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-6">{t("contact.sendMessage", locale)}</h2>
             {submitted && (
               <div className="mb-5 p-4 bg-green-50 border border-green-200 rounded-xl text-sm text-green-700">
-                {locale === "ar" ? "تم إرسال رسالتك بنجاح! سنتواصل معك قريباً." : "Your message has been sent successfully! We'll get back to you soon."}
+                {t("contact.success", locale)}
               </div>
             )}
             <form onSubmit={handleSubmit} className="space-y-5">

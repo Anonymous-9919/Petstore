@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { slugify } from "@/lib/utils";
 import { fromCSV, validateCSVFormat, PRODUCT_CSV_COLUMNS } from "@/lib/csv";
 import { writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
@@ -10,10 +11,6 @@ const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "products");
 
 // Minimum columns required for product CSV import
 const MINIMUM_CSV_COLUMNS = ["sku", "name", "category", "petType", "price", "stock", "active"] as const;
-
-function slugify(s: string) {
-  return s.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").slice(0, 100);
-}
 
 async function downloadImage(url: string, dest: string): Promise<boolean> {
   try {
