@@ -147,10 +147,10 @@ export function ProductCard({ product, locale }: ProductCardProps) {
         <CardBody className="flex flex-col flex-1 p-2.5 sm:p-3 gap-1.5">
           <Link href={`/products/${product.slug}`} className="block min-h-0">
             <p className="text-[10px] sm:text-xs text-[#ff6600] font-medium truncate">
-              {product.category}
+              {locale === "ar" && product.categoryAr ? product.categoryAr : product.category}
             </p>
             <h3 className="font-semibold text-gray-900 text-xs sm:text-sm leading-snug line-clamp-2 min-h-[2.5rem] sm:min-h-[2.75rem]">
-              {product.name}
+              {locale === "ar" && product.nameAr ? product.nameAr : product.name}
             </h3>
           </Link>
 

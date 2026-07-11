@@ -6,20 +6,20 @@ import { t } from "@/lib/translations";
 import { useLocale } from "@/lib/locale";
 import { useCartStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
-import { House, ShoppingBag, Grid3x3, ShoppingCart, User } from "lucide-react";
+import { House, ShoppingBag, Grid3x3, ShoppingCart, Phone } from "lucide-react";
 
 const tabs = [
   { key: "home", href: "/", icon: House },
   { key: "shop", href: "/products", icon: ShoppingBag },
-  { key: "categories", href: "/products", icon: Grid3x3 },
+  { key: "categories", href: "/categories", icon: Grid3x3 },
   { key: "cart", href: "/cart", icon: ShoppingCart },
-  { key: "contact", href: "/contact", icon: User },
+  { key: "contact", href: "/contact", icon: Phone },
 ];
 
 export default function BottomNav() {
   const pathname = usePathname();
   const { locale } = useLocale();
-  const itemCount = useCartStore((s) => s.getItemCount());
+  const itemCount = useCartStore((s) => s.items.reduce((acc, i) => acc + i.quantity, 0));
 
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] pb-[env(safe-area-inset-bottom)]">

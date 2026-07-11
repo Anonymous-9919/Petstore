@@ -3,13 +3,13 @@ import { PawPrint, Instagram, Facebook, Phone } from "lucide-react";
 import { t, Locale } from "@/lib/translations";
 
 const petTypes = [
-  { key: "cat", href: "/products?petType=cat" },
-  { key: "dog", href: "/products?petType=dog" },
-  { key: "bird", href: "/products?petType=bird" },
+  { key: "cat", href: "/products?petType=cats" },
+  { key: "dog", href: "/products?petType=dogs" },
+  { key: "bird", href: "/products?petType=birds" },
   { key: "fish", href: "/products?petType=fish" },
-  { key: "rabbit", href: "/products?petType=rabbit" },
-  { key: "hamster", href: "/products?petType=hamster" },
-  { key: "reptile", href: "/products?petType=reptile" },
+  { key: "rabbit", href: "/products?petType=rabbits" },
+  { key: "hamster", href: "/products?petType=hamsters" },
+  { key: "reptile", href: "/products?petType=reptiles" },
 ];
 
 const customerLinks = [

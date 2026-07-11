@@ -16,10 +16,17 @@ const Context = createContext<LocaleContext>({
 });
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("en");
+  const [locale, setLocaleState] = useState<Locale>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("ps_locale") as Locale | null;
+      if (saved === "en" || saved === "ar") return saved;
+    }
+    return "en";
+  });
 
   const setLocale = useCallback((l: Locale) => {
     setLocaleState(l);
+    localStorage.setItem("ps_locale", l);
     document.documentElement.lang = l;
     document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
   }, []);

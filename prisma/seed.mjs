@@ -106,7 +106,7 @@ async function main() {
       descriptionAr: decode(p.descriptionAr || ""),
       price: p.price,
       originalPrice: p.originalPrice || null,
-      stock: 50,
+      stock: 60,
       lowStockThreshold: 5,
       petType: p.petType,
       featured: !!p.featured,
@@ -129,6 +129,21 @@ async function main() {
     await prisma.productImage.createMany({ data: productImageData.slice(i, i + 500) });
   }
   console.log(`  ✓ ${productData.length} products (${productImageData.length} images)`);
+
+  // Branch stock — 20 per branch per product
+  await prisma.branchStock.deleteMany();
+  const branchRows = await prisma.branch.findMany({ select: { id: true } });
+  const productRows = await prisma.product.findMany({ select: { id: true } });
+  const branchStockData = [];
+  for (const p of productRows) {
+    for (const b of branchRows) {
+      branchStockData.push({ branchId: b.id, productId: p.id, stock: 20, active: true });
+    }
+  }
+  for (let i = 0; i < branchStockData.length; i += 500) {
+    await prisma.branchStock.createMany({ data: branchStockData.slice(i, i + 500) });
+  }
+  console.log(`  ✓ ${branchStockData.length} branch stock entries (20 per branch)`);
 
   // Settings
   const settings = {

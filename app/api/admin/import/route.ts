@@ -123,10 +123,14 @@ export async function POST(req: Request) {
     skipped: 0,
     imagesDownloaded: 0,
     imagesUploaded: 0,
+    branchStocksUpserted: 0,
     errors: [] as string[],
     mode,
     details: { created: [] as string[], updated: [] as string[], skipped: [] as string[] },
   };
+
+  const branches = await prisma.branch.findMany({ where: { active: true }, orderBy: { name: "asc" } });
+  const branchInfo = branches.map((b) => ({ id: b.id, slug: slugify(b.name) }));
 
   for (const row of rows) {
     try {
@@ -270,6 +274,26 @@ export async function POST(req: Request) {
         allImages.sort((a, b) => a.order - b.order);
         for (let i = 0; i < allImages.length; i++) {
           await prisma.productImage.create({ data: { productId: product.id, url: allImages[i].url, order: i } });
+        }
+
+        // Handle branch stock columns (branch_{slug}_stock, branch_{slug}_active)
+        if (branchInfo.length > 0) {
+          for (const branch of branchInfo) {
+            const stockKey = `branch_${branch.slug}_stock`;
+            const activeKey = `branch_${branch.slug}_active`;
+            if (row[stockKey] !== undefined && row[stockKey] !== "") {
+              const branchStock = parseInt(row[stockKey], 10);
+              if (!isNaN(branchStock) && branchStock >= 0) {
+                const branchActive = row[activeKey] !== "0" && row[activeKey] !== "no";
+                await prisma.branchStock.upsert({
+                  where: { branchId_productId: { branchId: branch.id, productId: product.id } },
+                  update: { stock: branchStock, active: branchActive },
+                  create: { branchId: branch.id, productId: product.id, stock: branchStock, active: branchActive },
+                });
+                results.branchStocksUpserted++;
+              }
+            }
+          }
         }
       }
     } catch (e) {

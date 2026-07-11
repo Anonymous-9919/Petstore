@@ -3,8 +3,8 @@
 import { useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, ShoppingCart, ShoppingBag } from "lucide-react";
-import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight, ShoppingCart, ShoppingBag, Minus, Plus } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatKWD } from "@/lib/utils";
@@ -21,7 +21,7 @@ interface FeaturedCarouselProps {
 export function FeaturedCarousel({ products, locale }: FeaturedCarouselProps) {
   const router = useRouter();
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { addItem } = useCartStore();
+  const { addItem, updateQuantity, getItemQuantity } = useCartStore();
 
   const scroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return;
@@ -67,6 +67,7 @@ export function FeaturedCarousel({ products, locale }: FeaturedCarouselProps) {
             product.onSale && product.originalPrice
               ? Math.round((1 - product.price / product.originalPrice) * 100)
               : 0;
+          const cartQty = getItemQuantity(product.id);
 
           return (
             <motion.div
@@ -108,7 +109,7 @@ export function FeaturedCarousel({ products, locale }: FeaturedCarouselProps) {
                 <div className="p-3 flex flex-col flex-1">
                   <Link href={`/products/${product.slug}`}>
                     <h3 className="font-semibold text-sm text-gray-900 line-clamp-2 mb-1 min-h-[2.5rem]">
-                      {product.name}
+                      {locale === "ar" && product.nameAr ? product.nameAr : product.name}
                     </h3>
                   </Link>
                   <div className="flex items-center justify-between gap-1 mt-auto">
@@ -123,26 +124,71 @@ export function FeaturedCarousel({ products, locale }: FeaturedCarouselProps) {
                       )}
                     </div>
                     <div className="flex gap-1">
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={() => handleAdd(product)}
-                        disabled={!product.inStock}
-                        className="!p-2 h-8 w-8"
-                        aria-label={t("product.add-to-cart", locale)}
-                      >
-                        <ShoppingCart className="w-3.5 h-3.5" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="primary"
-                        onClick={() => handleBuyNow(product)}
-                        disabled={!product.inStock}
-                        className="!p-2 h-8 w-8"
-                        aria-label={t("product.buy-now", locale)}
-                      >
-                        <ShoppingBag className="w-3.5 h-3.5" />
-                      </Button>
+                      <AnimatePresence mode="wait" initial={false}>
+                        {cartQty > 0 ? (
+                          <motion.div
+                            key="stepper"
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            transition={{ duration: 0.15 }}
+                            className="flex items-center rounded-lg bg-[#ff6600] text-white"
+                          >
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                updateQuantity(product.id, cartQty - 1);
+                              }}
+                              className="p-1.5 hover:bg-[#e65c00] rounded-l-lg transition-colors"
+                              aria-label="Decrease quantity"
+                            >
+                              <Minus className="w-3.5 h-3.5" />
+                            </button>
+                            <span className="w-6 text-center font-bold text-xs">
+                              {cartQty}
+                            </span>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                updateQuantity(product.id, cartQty + 1);
+                              }}
+                              className="p-1.5 hover:bg-[#e65c00] rounded-r-lg transition-colors"
+                              aria-label="Increase quantity"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                            </button>
+                          </motion.div>
+                        ) : (
+                          <motion.div
+                            key="buttons"
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            className="flex gap-1"
+                          >
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => handleAdd(product)}
+                              disabled={!product.inStock}
+                              className="!p-2 h-8 w-8"
+                              aria-label={t("product.add-to-cart", locale)}
+                            >
+                              <ShoppingCart className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="primary"
+                              onClick={() => handleBuyNow(product)}
+                              disabled={!product.inStock}
+                              className="!p-2 h-8 w-8"
+                              aria-label={t("product.buy-now", locale)}
+                            >
+                              <ShoppingBag className="w-3.5 h-3.5" />
+                            </Button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   </div>
                 </div>

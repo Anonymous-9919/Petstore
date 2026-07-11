@@ -101,3 +101,18 @@ export const useCartStore = create<CartStore>()(
     }
   )
 );
+
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (e) => {
+    if (e.key === "petstore-cart" && e.newValue) {
+      try {
+        const parsed = JSON.parse(e.newValue);
+        const store = useCartStore.getState();
+        if (parsed.state?.items) {
+          store.items.length === 0 && parsed.state.items.length > 0 &&
+            useCartStore.setState({ items: parsed.state.items });
+        }
+      } catch {}
+    }
+  });
+}

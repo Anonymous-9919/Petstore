@@ -167,6 +167,7 @@ export const translations: Record<string, { en: string; ar: string }> = {
   "checkout.errStreet": { en: "Street is required", ar: "الشارع مطلوب" },
   "checkout.errBuilding": { en: "Building is required", ar: "المبنى مطلوب" },
   "checkout.errGeneric": { en: "An error occurred. Please try again.", ar: "حدث خطأ. حاول مرة أخرى." },
+  "checkout.errPayment": { en: "Payment failed. Please try a different method.", ar: "فشل الدفع. يرجى تجربة طريقة أخرى." },
   "checkout.secureBy": { en: "Secured by UPayments", ar: "مدفوعات آمنة عبر UPayments" },
 
   // Order Success

@@ -25,8 +25,24 @@ export default function ContactPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitting(true)
+    try {
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+      setSubmitted(true)
+      setFormData({ name: "", email: "", phone: "", subject: "general", message: "" })
+    } catch {
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const contactMethods = [
@@ -52,6 +68,11 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">{t("contact.sendMessage", locale)}</h2>
+            {submitted && (
+              <div className="mb-5 p-4 bg-green-50 border border-green-200 rounded-xl text-sm text-green-700">
+                {locale === "ar" ? "تم إرسال رسالتك بنجاح! سنتواصل معك قريباً." : "Your message has been sent successfully! We'll get back to you soon."}
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("contact.name", locale)}</label>
@@ -80,7 +101,7 @@ export default function ContactPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">{t("contact.message", locale)}</label>
                 <textarea name="message" value={formData.message} onChange={handleChange} rows={5} placeholder={t("contact.messagePh", locale)} required className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#ff6600] focus:border-transparent transition-all resize-none" />
               </div>
-              <Button type="submit" className="w-full bg-[#ff6600] hover:bg-[#e65c00] text-white font-semibold py-3 rounded-lg inline-flex items-center justify-center gap-2">
+              <Button type="submit" disabled={submitting} className="w-full bg-[#ff6600] hover:bg-[#e65c00] text-white font-semibold py-3 rounded-lg inline-flex items-center justify-center gap-2 disabled:opacity-50">
                 <Send className="w-4 h-4" />
                 {t("contact.sendBtn", locale)}
               </Button>

@@ -7,7 +7,7 @@ import { Lock, Mail, Loader2 } from "@/lib/icons";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@petstorekw.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -102,7 +102,7 @@ export default function AdminLoginPage() {
         </form>
 
         <p className="text-xs text-gray-400 text-center mt-6">
-          Default: admin@petstorekw.com / Admin123!
+          Contact your administrator for credentials.
         </p>
       </motion.div>
     </div>

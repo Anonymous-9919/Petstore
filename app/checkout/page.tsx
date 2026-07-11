@@ -38,7 +38,7 @@ export default function CheckoutPage() {
   });
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const deliveryFee = deliveryMethod === "delivery" ? (subtotal >= 10 ? 0 : 2) : 0;
+  const deliveryFee = useCartStore.getState().getDeliveryFee();
   const total = subtotal + deliveryFee;
 
   const updateField = (field: string, value: string) => setForm((p) => ({ ...p, [field]: value }));
@@ -77,24 +77,27 @@ export default function CheckoutPage() {
       const orderNumber = dbData.orderNumber;
 
       if (selectedPayment !== "cod") {
-        try {
-          const origin = typeof window !== "undefined" ? window.location.origin : "";
-          const reference = orderNumber.slice(0, 12);
-          await fetch("/api/charge", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              order: { id: orderNumber.slice(0, 35), reference, description: `Pet Store Kuwait order #${reference}`, currency: "KWD", amount: total },
-              paymentGateway: { src: selectedPayment },
-              language: locale,
-              reference: { id: orderNumber.slice(0, 35) },
-              customer: { uniqueId: form.email, name: form.fullName, email: form.email, mobile: form.phone },
-              returnUrl: `${origin}/order/success?id=${dbData.orderId}`,
-              cancelUrl: `${origin}/cart`,
-              notificationUrl: `${origin}/api/webhook`,
-            }),
-          });
-        } catch {}
+        const origin = typeof window !== "undefined" ? window.location.origin : "";
+        const reference = orderNumber.slice(0, 12);
+        const chargeRes = await fetch("/api/charge", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            order: { id: orderNumber.slice(0, 35), reference, description: `Pet Store Kuwait order #${reference}`, currency: "KWD", amount: total },
+            paymentGateway: { src: selectedPayment },
+            language: locale,
+            reference: { id: orderNumber.slice(0, 35) },
+            customer: { uniqueId: form.email, name: form.fullName, email: form.email, mobile: form.phone },
+            returnUrl: `${origin}/order/success?id=${dbData.orderId}`,
+            cancelUrl: `${origin}/cart`,
+            notificationUrl: `${origin}/api/webhook`,
+          }),
+        });
+        const chargeData = await chargeRes.json().catch(() => ({}));
+        if (!chargeRes.ok || chargeData.error) {
+          setError(chargeData.error || t("checkout.errPayment", locale));
+          return;
+        }
       }
       clearCart();
       router.push(`/order/success?id=${dbData.orderId}`);

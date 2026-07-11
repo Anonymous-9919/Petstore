@@ -21,9 +21,9 @@ import {
 const navLinks = [
   { key: "home", href: "/" },
   { key: "shop", href: "/products" },
-  { key: "cats", href: "/products?petType=cat" },
-  { key: "dogs", href: "/products?petType=dog" },
-  { key: "birds", href: "/products?petType=bird" },
+  { key: "cats", href: "/products?petType=cats" },
+  { key: "dogs", href: "/products?petType=dogs" },
+  { key: "birds", href: "/products?petType=birds" },
   { key: "fish", href: "/products?petType=fish" },
   { key: "locations", href: "/locations" },
   { key: "contact", href: "/contact" },
@@ -32,7 +32,7 @@ const navLinks = [
 export default function Header() {
   const pathname = usePathname();
   const { locale, setLocale } = useLocale();
-  const itemCount = useCartStore((s) => s.getItemCount());
+  const itemCount = useCartStore((s) => s.items.reduce((acc, i) => acc + i.quantity, 0));
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);

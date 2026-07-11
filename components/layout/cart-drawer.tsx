@@ -19,11 +19,9 @@ export default function CartDrawer() {
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
   const clearCart = useCartStore((s) => s.clearCart);
-  const getSubtotal = useCartStore((s) => s.getSubtotal);
-  const getItemCount = useCartStore((s) => s.getItemCount);
 
-  const subtotal = getSubtotal();
-  const itemCount = getItemCount();
+  const subtotal = items.reduce((acc, i) => acc + i.price * i.quantity, 0);
+  const itemCount = items.reduce((acc, i) => acc + i.quantity, 0);
   const isDeliveryFree = subtotal >= DELIVERY_THRESHOLD;
   const deliveryFee = isDeliveryFree ? 0 : 1;
   const total = subtotal + deliveryFee;

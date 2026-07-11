@@ -34,7 +34,7 @@ export default function OrderSuccessContent() {
     <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         {[...Array(6)].map((_, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: -20 }} animate={{ opacity: 0.15, y: "100vh" }} transition={{ duration: 8 + i * 2, repeat: Infinity, delay: i * 1.5 }} className="absolute text-[#ff6600]" style={{ left: `${15 + i * 15}%`, fontSize: `${20 + i * 5}px` }}>
+          <motion.div key={i} initial={{ opacity: 0, y: -20 }} animate={{ opacity: [0, 0.15, 0], y: "100vh" }} transition={{ duration: 8 + i * 2, repeat: 2, delay: i * 1.5 }} className="absolute text-[#ff6600]" style={{ left: `${15 + i * 15}%`, fontSize: `${20 + i * 5}px` }}>
             {i % 2 === 0 ? "🐾" : "⭐"}
           </motion.div>
         ))}

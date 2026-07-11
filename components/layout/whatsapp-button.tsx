@@ -32,11 +32,15 @@ export function WhatsAppButton() {
 
   useEffect(() => {
     if (!visible) return;
+    let pulseTimeout: ReturnType<typeof setTimeout>;
     const interval = setInterval(() => {
       setPulse(false);
-      setTimeout(() => setPulse(true), 100);
+      pulseTimeout = setTimeout(() => setPulse(true), 100);
     }, 4000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(pulseTimeout);
+    };
   }, [visible]);
 
   if (!visible) return null;

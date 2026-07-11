@@ -30,7 +30,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <LocaleProvider>
           <FulfillmentGateWrapper>
-            {children}
+            <main id="main-content" className="flex-1">
+              {children}
+            </main>
           </FulfillmentGateWrapper>
         </LocaleProvider>
       </body>
