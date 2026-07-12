@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getProductBySlug, getProducts } from "@/lib/products";
+import { getProductBySlug, getRelatedProducts } from "@/lib/products";
 import ProductDetailClient from "./client";
 
 export const dynamic = "force-dynamic";
@@ -16,10 +16,7 @@ export default async function ProductPage({
     notFound();
   }
 
-  const allProducts = await getProducts("en");
-  const related = allProducts
-    .filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id)
-    .slice(0, 4);
+  const related = await getRelatedProducts(product.categorySlug, product.id, "en");
 
   return <ProductDetailClient product={product} related={related} />;
 }

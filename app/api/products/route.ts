@@ -6,23 +6,27 @@ export async function GET(req: Request) {
   const branchId = url.searchParams.get("branchId");
   const locale = url.searchParams.get("locale") || "en";
 
-  // For delivery (no branchId): show all active products
-  // For pickup (branchId): show only products with stock in that branch
   if (!branchId) {
     const products = await prisma.product.findMany({
       where: { active: true },
-      include: {
+      select: {
+        id: true, name: true, nameAr: true, slug: true,
+        description: true, descriptionAr: true,
+        price: true, originalPrice: true, stock: true, petType: true,
+        featured: true, active: true, rating: true,
+        reviewCount: true, createdAt: true,
         category: { select: { name: true, nameAr: true, slug: true } },
-        images: { take: 1, orderBy: { order: "asc" } },
+        images: { select: { url: true, order: true }, take: 1, orderBy: { order: "asc" as const } },
       },
       orderBy: { createdAt: "desc" },
     });
-    return NextResponse.json(serializeProducts(products, locale));
+    return NextResponse.json(serializeProducts(products, locale), {
+      headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" },
+    });
   }
 
-  // Pickup mode: only products with stock > 0 in this branch
   const branchStocks = await prisma.branchStock.findMany({
-    where: { branchId, active: true, stock: { gt: 0 } },
+    where: { branchId, active: true, stock: { gt: 0 }, product: { active: true } },
     include: {
       product: {
         include: {
@@ -35,10 +39,12 @@ export async function GET(req: Request) {
   });
 
   const products = branchStocks
-    .filter((bs) => bs.product.active)
-    .map((bs) => bs.product);
+    .map((bs) => bs.product)
+    .filter(Boolean);
 
-  return NextResponse.json(serializeProducts(products, locale));
+  return NextResponse.json(serializeProducts(products, locale), {
+    headers: { "Cache-Control": "public, s-maxage=30, stale-while-revalidate=120" },
+  });
 }
 
 function serializeProducts(products: any[], locale: string) {
@@ -58,7 +64,7 @@ function serializeProducts(products: any[], locale: string) {
     onSale: p.originalPrice !== null && p.originalPrice > p.price,
     category: p.category,
     categorySlug: p.category?.slug || "",
-    tags: p.tags,
+    tags: null,
     rating: p.rating,
     reviewCount: p.reviewCount,
     createdAt: p.createdAt,

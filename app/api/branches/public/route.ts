@@ -6,10 +6,19 @@ export async function GET() {
     where: { active: true, pickupAvailable: true },
     orderBy: { name: "asc" },
   });
-  // Parse phone JSON for each branch
   const result = branches.map((b) => ({
-    ...b,
+    id: b.id,
+    name: b.name,
+    nameAr: b.nameAr,
+    address: b.address,
+    addressAr: b.addressAr,
     phone: (() => { try { return JSON.parse(b.phone); } catch { return [b.phone]; } })(),
+    hours: b.hours,
+    hoursAr: b.hoursAr,
+    pickupAvailable: b.pickupAvailable,
+    active: b.active,
   }));
-  return NextResponse.json(result);
+  return NextResponse.json(result, {
+    headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
+  });
 }

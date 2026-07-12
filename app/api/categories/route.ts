@@ -13,6 +13,9 @@ export async function GET() {
   });
   const countMap = new Map(counts.map((c) => [c.categoryId, c._count._all]));
   return NextResponse.json(
-    categories.map((c) => ({ ...c, count: countMap.get(c.id) || 0 }))
+    categories.map((c) => ({ ...c, count: countMap.get(c.id) || 0 })),
+    {
+      headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
+    }
   );
 }

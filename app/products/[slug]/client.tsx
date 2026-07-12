@@ -12,6 +12,7 @@ import { useCartStore } from "@/lib/store";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/translations";
 import { ProductCard } from "@/components/product/product-card";
+import BackButton from "@/components/ui/back-button";
 import type { Product } from "@/types";
 
 const petEmoji: Record<string, string> = {
@@ -64,7 +65,8 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6 md:py-10">
+    <div className="max-w-7xl mx-auto px-4 py-6 md:py-10 pb-24 md:pb-10">
+      <BackButton href="/products" />
       <nav className="flex items-center gap-2 text-sm text-text-muted mb-6 overflow-x-auto no-scrollbar">
         <Link href="/" className="hover:text-primary transition-colors shrink-0">{t("nav.home", locale)}</Link>
         <ChevronRight className="w-3.5 h-3.5 shrink-0" />

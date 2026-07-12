@@ -4,6 +4,7 @@ import { useLocale } from "@/lib/locale"
 import { t } from "@/lib/translations"
 import { PawPrint, Heart, Star, Users, MapPin, Shield, Truck, Store } from "@/lib/icons"
 import { motion } from "framer-motion"
+import BackButton from "@/components/ui/back-button"
 
 export default function AboutPage() {
   const { locale } = useLocale()
@@ -22,8 +23,11 @@ export default function AboutPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-white">
-      <section className="bg-gradient-to-br from-[#ff6600] to-[#ff8533] py-24 px-4">
+    <div className="min-h-screen bg-white pb-20 md:pb-0">
+      <section className="bg-gradient-to-br from-[#ff6600] to-[#ff8533] pt-8 pb-24 px-4">
+        <div className="max-w-4xl mx-auto">
+          <BackButton href="/" label="← Home" />
+        </div>
         <div className="max-w-4xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6 }} className="mb-6">
             <PawPrint className="w-20 h-20 text-white mx-auto" />

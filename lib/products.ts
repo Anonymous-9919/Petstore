@@ -149,6 +149,18 @@ export async function searchProducts(query: string, locale?: Locale): Promise<Pr
   return rows.map((r) => localize(mapProduct(r), locale ?? "en"));
 }
 
+export async function getRelatedProducts(categorySlug: string, excludeId: string, locale?: Locale): Promise<Product[]> {
+  const category = await prisma.category.findUnique({ where: { slug: categorySlug } });
+  if (!category) return [];
+  const rows = await prisma.product.findMany({
+    where: { active: true, categoryId: category.id, id: { not: excludeId } },
+    include: includeProduct,
+    orderBy: { createdAt: "desc" },
+    take: 4,
+  });
+  return rows.map((r) => localize(mapProduct(r), locale ?? "en"));
+}
+
 export async function getBranches(): Promise<Branch[]> {
   const rows = await prisma.branch.findMany({
     where: { active: true },

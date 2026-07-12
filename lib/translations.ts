@@ -17,6 +17,8 @@ export const translations: Record<string, { en: string; ar: string }> = {
   "nav.contact": { en: "Contact", ar: "اتصل بنا" },
   "nav.cart": { en: "Cart", ar: "السلة" },
   "nav.checkout": { en: "Checkout", ar: "الدفع" },
+  "nav.back": { en: "Back", ar: "رجوع" },
+  "nav.menu": { en: "Menu", ar: "القائمة" },
 
   // Hero
   "hero.badge": { en: "Kuwait's #1 Pet Store", ar: "أول متجر حيوانات في الكويت" },

@@ -84,40 +84,39 @@ export default function ProductsContent() {
 
   const [allProducts, setAllProducts] = useState<ApiProduct[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [branchList, setBranchList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [branchName, setBranchName] = useState("");
 
-  // Fetch categories once
+  const branchName = branchList.find((b: any) => b.id === selectedBranch)?.name || "";
+
+  // Fetch categories and branches once
   useEffect(() => {
-    fetch("/api/categories")
-      .then((r) => r.ok ? r.json() : [])
-      .then((data) => setCategories(data))
-      .catch(() => setCategories([]));
+    Promise.all([
+      fetch("/api/categories").then((r) => r.ok ? r.json() : []),
+      fetch("/api/branches/public").then((r) => r.ok ? r.json() : []),
+    ]).then(([cats, branches]) => {
+      setCategories(cats);
+      setBranchList(branches);
+    }).catch(() => {
+      setCategories([]);
+      setBranchList([]);
+    });
   }, []);
 
   // Fetch products — filtered by branch if pickup
   useEffect(() => {
+    const controller = new AbortController();
     setLoading(true);
     const url = new URL("/api/products", window.location.origin);
     if (selectedBranch) url.searchParams.set("branchId", selectedBranch);
-    fetch(url.toString())
+    fetch(url.toString(), { signal: controller.signal })
       .then((r) => r.ok ? r.json() : [])
       .then((data) => {
         setAllProducts(data);
-        if (selectedBranch) {
-          fetch(`/api/branches/public`)
-            .then((r) => r.ok ? r.json() : [])
-            .then((branches) => {
-              const b = branches.find((x: any) => x.id === selectedBranch);
-              if (b) setBranchName(b.name);
-            })
-            .catch(() => {});
-        } else {
-          setBranchName("");
-        }
+        setLoading(false);
       })
-      .catch(() => setAllProducts([]))
-      .finally(() => setLoading(false));
+      .catch((e) => { if (e.name !== "AbortError") { setAllProducts([]); setLoading(false); } });
+    return () => controller.abort();
   }, [selectedBranch]);
 
   const categoriesByPetType = useMemo(() => {
@@ -227,7 +226,7 @@ export default function ProductsContent() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6 md:py-10">
+    <div className="max-w-7xl mx-auto px-4 py-6 md:py-10 pb-24 md:pb-10">
       {selectedBranch && (
         <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-xl flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-sm text-green-800">
@@ -361,15 +360,12 @@ export default function ProductsContent() {
               }
             >
               {filtered.map((product, i) => (
-                <motion.div
+                <div
                   key={product.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.04, duration: 0.3 }}
                   className="h-full"
                 >
                   <ProductCard product={toTypeProduct(product)} locale={locale} />
-                </motion.div>
+                </div>
               ))}
             </div>
           )}

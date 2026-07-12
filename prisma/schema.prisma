@@ -96,6 +96,12 @@ model Product {
   branchStocks       BranchStock[]
   createdAt          DateTime        @default(now())
   updatedAt          DateTime        @updatedAt
+
+  @@index([active, createdAt(sort: Desc)])
+  @@index([active, featured])
+  @@index([active, categoryId])
+  @@index([active, petType])
+  @@index([active, originalPrice])
 }
 
 model ProductImage {
@@ -209,6 +215,7 @@ model BranchStock {
   updatedAt DateTime @updatedAt
 
   @@unique([branchId, productId])
+  @@index([branchId, active, stock])
 }
 
 model Setting {

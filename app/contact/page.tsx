@@ -8,6 +8,7 @@ import { Phone, Mail, MessageCircle, Instagram, Facebook, Globe, MapPin, Clock, 
 import { motion } from "framer-motion"
 import Button from "@/components/ui/button"
 import Input from "@/components/ui/input"
+import BackButton from "@/components/ui/back-button"
 
 export default function ContactPage() {
   const { locale } = useLocale()
@@ -54,8 +55,11 @@ export default function ContactPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-white">
-      <section className="bg-gradient-to-br from-[#ff6600] to-[#ff8533] py-20 px-4">
+    <div className="min-h-screen bg-white pb-20 md:pb-0">
+      <section className="bg-gradient-to-br from-[#ff6600] to-[#ff8533] pt-8 pb-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <BackButton href="/" label="← Home" />
+        </div>
         <div className="max-w-6xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{t("contact.title", locale)}</h1>

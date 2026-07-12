@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Quicksand } from "next/font/google";
 import "./globals.css";
 import { LocaleProvider } from "@/lib/locale";
-import { FulfillmentGate } from "@/components/fulfillment/fulfillment-gate";
-import { FulfillmentGateWrapper } from "@/components/fulfillment/fulfillment-gate-wrapper";
+import { StoreShell } from "@/components/layout/store-shell";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+const quicksand = Quicksand({
+  variable: "--font-quicksand",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
   title: "Pet Store Kuwait | بت ستور — Your Dependable Partner in PetHood",
@@ -24,16 +27,16 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
-      <body className={`${geistSans.variable} min-h-screen flex flex-col antialiased`}>
+      <body className={`${quicksand.variable} font-sans min-h-screen flex flex-col antialiased bg-[#f4f5f5]`}>
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[60] focus:px-4 focus:py-2 focus:bg-[#ff6600] focus:text-white focus:rounded-xl focus:text-sm focus:font-semibold">
           Skip to content
         </a>
         <LocaleProvider>
-          <FulfillmentGateWrapper>
-            <main id="main-content" className="flex-1">
+          <StoreShell>
+            <div id="main-content">
               {children}
-            </main>
-          </FulfillmentGateWrapper>
+            </div>
+          </StoreShell>
         </LocaleProvider>
       </body>
     </html>
