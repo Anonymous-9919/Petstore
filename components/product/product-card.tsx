@@ -68,17 +68,16 @@ export const ProductCard = memo(function ProductCard({ product, locale }: Produc
   return (
     <Link href={`/products/${product.slug}`} className="block group" prefetch>
       <div
-        className="bg-white overflow-hidden relative"
+        className="bg-white overflow-hidden relative border border-gray-200 hover:shadow-lg transition-shadow"
         style={{
-          borderRadius: 7,
-          minHeight: 240,
+          borderRadius: 8,
           cursor: "pointer",
         }}
       >
         {/* Image */}
         <div
-          className="relative flex items-center justify-center overflow-hidden"
-          style={{ maxHeight: 240, minHeight: 240, borderRadius: 7 }}
+          className="relative flex items-center justify-center overflow-hidden bg-gray-50"
+          style={{ height: 200 }}
         >
           {imageSrc && !imgError ? (
             <img
@@ -86,25 +85,22 @@ export const ProductCard = memo(function ProductCard({ product, locale }: Produc
               alt={isEnglish ? product.name : (product.nameAr || product.name)}
               loading="lazy"
               decoding="async"
-              className="w-full h-full object-contain preventDrag"
-              style={{ borderRadius: 7 }}
+              className="w-full h-full object-contain p-2 preventDrag"
               onError={() => setImgError(true)}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-50 text-4xl" style={{ minHeight: 240 }}>
+            <div className="w-full h-full flex items-center justify-center bg-gray-50 text-4xl">
               🐾
             </div>
           )}
 
-          {/* Discount badge — matching source: padding:1px 5px, borderRadius:3, fontSize:16px, top:8px */}
+          {/* Discount badge */}
           {product.onSale && savePercent > 0 && (
             <div
-              className="discount-sign"
+              className="absolute top-2 bg-red-500 text-white text-xs font-bold rounded px-2 py-1"
               style={{
-                right: isEnglish ? 10 : undefined,
-                left: isEnglish ? undefined : 10,
-                direction: "ltr",
-                zIndex: 100,
+                right: isEnglish ? 8 : undefined,
+                left: isEnglish ? undefined : 8,
               }}
             >
               -{savePercent}%
@@ -121,94 +117,65 @@ export const ProductCard = memo(function ProductCard({ product, locale }: Produc
           )}
         </div>
 
-        {/* Product Name — 14px, bold, height 40px */}
-        <p
-          className="text-black"
-          style={{
-            fontSize: 14,
-            fontWeight: "bold",
-            height: 40,
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            padding: "8px 15px 0",
-            textDecoration: isInStock ? "none" : "line-through",
-            fontFamily: isEnglish ? "Quicksand" : "Cairo",
-            textAlign: isEnglish ? "left" : "right",
-            direction: isEnglish ? "ltr" : "rtl",
-          }}
-        >
-          {isEnglish ? product.name : (product.nameAr || product.name)}
-        </p>
+        {/* Content */}
+        <div className="p-3">
+          {/* Product Name */}
+          <h3
+            className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2"
+            style={{
+              minHeight: 40,
+              fontFamily: isEnglish ? "Quicksand, sans-serif" : "Cairo, sans-serif",
+            }}
+          >
+            {isEnglish ? product.name : (product.nameAr || product.name)}
+          </h3>
 
-        {/* Price — 14px, bold, theme color */}
-        <div
-          style={{
-            padding: "0 15px",
-            fontSize: 14,
-            fontWeight: "bold",
-            color: "#ff6600",
-            direction: isEnglish ? "ltr" : "rtl",
-            textAlign: isEnglish ? "left" : "right",
-          }}
-        >
-          {product.onSale && product.originalPrice ? (
-            <span style={{ position: "relative" }}>
-              <span style={{ textDecoration: "line-through", fontSize: 11, position: "absolute", top: -15, left: 6, color: "#999" }}>
-                {formatKWD(product.originalPrice)}
+          {/* Price */}
+          <div className="mb-3">
+            {product.onSale && product.originalPrice ? (
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-bold text-[#ff6600]">
+                  {formatKWD(product.price)}
+                </span>
+                <span className="text-xs text-gray-400 line-through">
+                  {formatKWD(product.originalPrice)}
+                </span>
+              </div>
+            ) : (
+              <span className="text-lg font-bold text-[#ff6600]">
+                {formatKWD(product.price)}
               </span>
-              <br />
-              {formatKWD(product.price)}
-            </span>
-          ) : (
-            formatKWD(product.price)
-          )}
-        </div>
+            )}
+          </div>
 
-        {/* Add to Cart / Quantity Controls */}
-        <div style={{ padding: "8px 15px 12px" }}>
+          {/* Add to Cart / Quantity Controls */}
           {cartQty > 0 ? (
             <div
               className="flex items-center justify-between mx-auto"
               style={{
-                width: 125,
+                width: 120,
                 backgroundColor: "white",
-                height: 30,
+                height: 32,
                 border: "1px solid #DEDEDE",
-                borderRadius: 50,
+                borderRadius: 16,
               }}
             >
               <button
                 onClick={handleDecrement}
-                className="flex items-center justify-center"
-                style={{ width: 30 }}
+                className="flex items-center justify-center flex-1 h-full hover:bg-gray-50 rounded-l-full"
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff6600" strokeWidth="2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff6600" strokeWidth="2">
                   <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
               </button>
-              <span
-                style={{
-                  color: "#ff6600",
-                  border: "1px solid #DEDEDE",
-                  width: 60,
-                  padding: "2px 0",
-                  textAlign: "center",
-                  fontSize: 14,
-                  borderTop: 0,
-                  borderBottom: 0,
-                }}
-              >
+              <span className="text-sm font-semibold text-[#ff6600] min-w-[30px] text-center">
                 {cartQty}
               </span>
               <button
                 onClick={handleIncrement}
-                className="flex items-center justify-center"
-                style={{ width: 30 }}
+                className="flex items-center justify-center flex-1 h-full hover:bg-gray-50 rounded-r-full"
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff6600" strokeWidth="2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff6600" strokeWidth="2">
                   <line x1="12" y1="5" x2="12" y2="19" />
                   <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
@@ -218,22 +185,22 @@ export const ProductCard = memo(function ProductCard({ product, locale }: Produc
             <button
               onClick={handleAddToCart}
               disabled={!isInStock}
-              className="w-full flex items-center justify-center gap-1 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 disabled:cursor-not-allowed transition-colors"
               style={{
-                height: 30,
+                height: 36,
                 fontWeight: "bold",
-                border: isInStock ? "1px solid #29ac00" : "1px solid #ccc",
-                borderRadius: 3,
-                textTransform: "none",
-                fontSize: 14,
+                border: "none",
+                borderRadius: 6,
+                fontSize: 13,
                 backgroundColor: isInStock ? "#29ac00" : "#ccc",
                 color: "white",
                 fontFamily: "Quicksand, Cairo, sans-serif",
               }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
               </svg>
               {t("product.add-to-cart", locale)}
             </button>
