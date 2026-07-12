@@ -24,29 +24,42 @@ export function StoreShell({ children }: { children: ReactNode }) {
 
   return (
     <>
-      {/* Desktop: Split layout — left 41.6%, right 58.4% */}
-      <div className="hidden md:flex min-h-screen">
-        <div className="w-full md:w-[41.6%] flex flex-col bg-[#f4f5f5] h-screen">
+      {/* Desktop: Split layout matching source site
+          English: Content 5/12 (41.6vw) LEFT, Banner 7/12 (58.4vw) RIGHT
+          Arabic: Content 5/12 RIGHT (ml-auto), Banner 7/12 LEFT */}
+      <div className="hidden md:flex h-screen overflow-hidden">
+        {/* Left banner panel (English) / Right content (Arabic) */}
+        <div
+          className="hidden md:block md:w-[58.4%] relative"
+          style={{ order: locale === "ar" ? -1 : 2 }}
+        >
+          <div
+            className="h-full w-full overflow-hidden"
+            style={{ backgroundColor: "#f4f5f5", position: "fixed", left: locale === "ar" ? 0 : "41.64vw", top: 0, zIndex: 55 }}
+          >
+            <img src="/images/site/cover.jpeg" alt="Pet Store Kuwait" className="w-full h-full object-cover" />
+          </div>
+        </div>
+
+        {/* Right content panel (English) / Left content (Arabic) */}
+        <div
+          className="w-full md:w-[41.6%] flex flex-col"
+          style={{
+            backgroundColor: "#f4f5f5",
+            overflowY: "auto",
+            overflowX: "hidden",
+            minHeight: "calc(100% - 60px)",
+            height: "calc(100% - 60px)",
+            marginLeft: locale === "ar" ? "auto" : undefined,
+          }}
+        >
           <Header />
           <DeliveryBar />
-          <main id="main-content" className="flex-1 overflow-y-auto">
+          <main id="main-content" className="flex-1">
             {children}
             <Footer />
           </main>
           <DesktopBottomBar />
-        </div>
-
-        <div className="hidden md:block md:w-[58.4%] relative">
-          <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#ff6600]">
-            <img src="/images/site/cover.jpeg" alt="Pet Store Kuwait" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-            <div className="absolute bottom-10 left-8 right-8 text-white">
-              <img src="/logo.jpg" alt="Pet Store" className="h-14 w-auto object-contain mb-3 drop-shadow-lg" />
-              <h2 className="text-xl lg:text-2xl font-bold drop-shadow-lg leading-snug">
-                {locale === "ar" ? "شريكك الموثوق في عالم الحيوانات الأليفة" : "Your Dependable Partner in PetHood"}
-              </h2>
-            </div>
-          </div>
         </div>
       </div>
 

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale } from "@/lib/locale";
 import { useCartStore } from "@/lib/store";
-import { Menu, Search, ShoppingCart, ArrowLeft, X } from "lucide-react";
+import { Menu, Search, ShoppingCart, ArrowLeft, X, ChevronLeft } from "lucide-react";
 import type { Category } from "@/types";
 
 export default function Header() {
@@ -63,16 +63,34 @@ export default function Header() {
 
   return (
     <>
-      {/* Desktop Header */}
-      <header className="hidden md:flex sticky top-0 z-50 bg-white items-center h-[60px] px-4 gap-3">
-        <Link href="/" className="flex items-center shrink-0 mr-2">
-          <img src="/logo.jpg" alt="Pet Store" className="h-[40px] w-auto object-contain" />
-        </Link>
+      {/* Desktop Header — fixed at top of content panel, matching source site */}
+      <header
+        className="hidden md:flex sticky top-0 z-[1000] bg-white border-b items-center px-4 gap-3"
+        style={{ borderColor: "#dee2e6", height: 60 }}
+      >
+        {!isHome ? (
+          <button onClick={goBack} className="p-1 -ml-1 rounded hover:bg-gray-100 shrink-0" aria-label="Back">
+            <ChevronLeft className="w-5 h-5 text-black" />
+          </button>
+        ) : (
+          <Link href="/" className="flex items-center shrink-0 mr-2">
+            <img src="/logo.jpg" alt="Pet Store" style={{ borderRadius: 10, height: 38, width: 38, objectFit: "contain" }} />
+          </Link>
+        )}
+
+        {!isHome && (
+          <div className="absolute left-1/2 -translate-x-1/2 text-center" style={{ width: "100%" }}>
+            <p className="text-[17px] font-semibold truncate max-w-[60%] mx-auto" style={{ maxHeight: 54 }}>
+              {/* Title rendered by parent on detail pages */}
+            </p>
+          </div>
+        )}
 
         <div className="flex items-center gap-2 ml-auto">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex items-center justify-center w-[40px] h-[40px] rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
+            className="header-button-cricle flex items-center justify-center"
+            style={{ minHeight: 40, borderRadius: 20, backgroundColor: "#fff", border: "1px solid #e5e7eb" }}
             aria-label="Menu"
           >
             <Menu className="w-5 h-5 text-gray-700" />
@@ -80,7 +98,8 @@ export default function Header() {
 
           <button
             onClick={() => setSearchOpen(!searchOpen)}
-            className="flex items-center justify-center w-[40px] h-[40px] rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
+            className="header-button-cricle flex items-center justify-center"
+            style={{ minHeight: 40, borderRadius: 20, backgroundColor: "#fff", border: "1px solid #e5e7eb" }}
             aria-label="Search"
           >
             <Search className="w-5 h-5 text-gray-700" />
@@ -88,7 +107,8 @@ export default function Header() {
 
           <button
             onClick={toggleLocale}
-            className="flex items-center justify-center w-[40px] h-[40px] rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors text-sm font-bold text-gray-700"
+            className="header-button-cricle flex items-center justify-center"
+            style={{ minHeight: 40, borderRadius: 20, backgroundColor: "#fff", border: "1px solid #e5e7eb", fontSize: 14, fontWeight: "bold" }}
             aria-label="Toggle language"
           >
             {locale === "en" ? "ع" : "En"}
@@ -96,7 +116,8 @@ export default function Header() {
 
           <button
             onClick={toggleCartDrawer}
-            className="relative flex items-center justify-center w-[40px] h-[40px] rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
+            className="relative header-button-cricle flex items-center justify-center"
+            style={{ minHeight: 40, borderRadius: 20, backgroundColor: "#fff", border: "1px solid #e5e7eb" }}
             aria-label="Cart"
           >
             <ShoppingCart className="w-5 h-5 text-gray-700" />
@@ -196,12 +217,12 @@ export default function Header() {
         )}
       </header>
 
-      {/* Mobile Header */}
-      <header className="md:hidden sticky top-0 z-50 bg-white border-b border-gray-100">
-        <div className="flex items-center h-[50px] px-3">
+      {/* Mobile Header — matching source: 60px height, fixed, border-bottom */}
+      <header className="md:hidden sticky top-0 z-[1000] bg-white border-b" style={{ borderColor: "#dee2e6", height: 60 }}>
+        <div className="flex items-center h-[60px] px-3">
           {!isHome ? (
-            <button onClick={goBack} className="p-1.5 -ml-1 rounded-lg hover:bg-gray-100 shrink-0" aria-label="Back">
-              <ArrowLeft className="w-5 h-5 text-gray-700" />
+            <button onClick={goBack} className="p-1 -ml-1 rounded hover:bg-gray-100 shrink-0" aria-label="Back">
+              <ChevronLeft className="w-6 h-6 text-black" />
             </button>
           ) : (
             <div className="w-8 shrink-0" />
@@ -209,7 +230,7 @@ export default function Header() {
 
           <div className="flex-1 flex justify-center">
             <Link href="/">
-              <img src="/logo.jpg" alt="Pet Store" className="h-[32px] w-auto object-contain" />
+              <img src="/logo.jpg" alt="Pet Store" style={{ borderRadius: 10, height: 38, width: 38, objectFit: "contain" }} />
             </Link>
           </div>
 

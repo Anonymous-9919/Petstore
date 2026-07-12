@@ -495,3 +495,89 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Source site CSS classes */
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.preventDrag {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+.cut-text-one-line-product-name {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 68%;
+}
+
+.header-button-cricle {
+  min-height: 40px !important;
+  border-radius: 20px !important;
+  background-color: #fff !important;
+}
+
+.discount-sign {
+  padding: 1px 5px;
+  border-radius: 3px;
+  text-align: center;
+  font-size: 16px;
+  color: #fff;
+  font-weight: bold;
+  top: 8px;
+  position: absolute;
+}
+
+.action-button-english {
+  width: 100%;
+  padding: 7px;
+  background-color: #fff;
+  position: fixed;
+  bottom: 0;
+}
+
+.action-button-arabic {
+  width: 100%;
+  padding: 7px;
+  background-color: #fff;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+@media only screen and (min-width: 768px) {
+  .action-button-english {
+    width: 41.6%;
+    padding: 7px;
+    bottom: 0;
+    position: fixed;
+    left: 0;
+    background-color: #fff;
+  }
+  .action-button-arabic {
+    width: 41.7%;
+    padding: 7px;
+    background-color: #fff;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+  }
+}
+
+.border-b-custom {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.bold {
+  font-weight: 700 !important;
+}

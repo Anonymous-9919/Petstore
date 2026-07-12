@@ -1,141 +1,88 @@
 "use client";
 
-import { useState } from "react";
 import { useLocale } from "@/lib/locale";
 import { useCartStore } from "@/lib/store";
-import { useBranches } from "@/lib/use-branches";
-import { Truck, Store, ChevronDown, Check } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "ps_fulfillment_method";
 const BRANCH_KEY = "ps_selected_branch";
 
-const AREAS = ["Ahmadi", "Farwaniya", "Hawalli", "Jahra", "Capital", "Mubarak Al-Kabeer"];
-
 export default function DeliveryBar() {
   const { locale } = useLocale();
-  const { deliveryMethod, selectedBranch, setDeliveryMethod, setSelectedBranch } = useCartStore();
-  const branches = useBranches();
-  const [areaOpen, setAreaOpen] = useState(false);
-  const [branchOpen, setBranchOpen] = useState(false);
-  const [selectedArea, setSelectedArea] = useState("");
+  const { deliveryMethod, setDeliveryMethod, setSelectedBranch } = useCartStore();
+  const isEnglish = locale === "en";
 
   const chooseMethod = (method: "delivery" | "pickup") => {
     setDeliveryMethod(method);
     try { window.sessionStorage.setItem(STORAGE_KEY, method); } catch {}
-    if (method === "pickup" && branches.length > 0 && !selectedBranch) {
-      setSelectedBranch(branches[0].id);
-      try { window.sessionStorage.setItem(BRANCH_KEY, branches[0].id); } catch {}
-    }
     if (method === "delivery") {
       try { window.sessionStorage.removeItem(BRANCH_KEY); } catch {}
       setSelectedBranch("");
     }
-    setBranchOpen(false);
-    setAreaOpen(false);
   };
-
-  const chooseBranch = (branchId: string) => {
-    setSelectedBranch(branchId);
-    try { window.sessionStorage.setItem(BRANCH_KEY, branchId); } catch {}
-    setDeliveryMethod("pickup");
-    try { window.sessionStorage.setItem(STORAGE_KEY, "pickup"); } catch {}
-    setBranchOpen(false);
-  };
-
-  const selectedBranchObj = branches.find((b) => b.id === selectedBranch);
-  const branchName = selectedBranchObj
-    ? (locale === "ar" ? selectedBranchObj.nameAr : selectedBranchObj.name)
-    : "";
 
   return (
-    <div className="bg-white border-b border-gray-100 px-4 py-2.5">
-      <div className="flex items-center gap-3 flex-wrap">
-        {/* Delivery / Pickup Toggle */}
-        <div className="flex items-center bg-gray-100 rounded-full p-0.5 shrink-0">
+    <div
+      className="w-full bg-white"
+      style={{ borderTop: "1px solid #dee2e6" }}
+      dir={isEnglish ? "ltr" : "rtl"}
+    >
+      <div
+        className="flex items-center justify-center bg-white border-b"
+        style={{ borderColor: "#dee2e6", minHeight: 65, whiteSpace: "nowrap" }}
+      >
+        {/* Delivery button */}
+        <div className="flex-1 max-w-[150px] flex items-center justify-center bg-white m-auto py-2">
           <button
             onClick={() => chooseMethod("delivery")}
-            className={cn(
-              "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all",
+            style={{
+              lineHeight: 3,
+              width: "100%",
+              maxHeight: 40,
+              textTransform: "none",
+              fontWeight: "bold",
+              boxShadow: "none",
+              borderRadius: 3,
+              padding: "0 16px",
+              border: deliveryMethod !== "delivery" ? "1px solid #666666" : "none",
+              color: deliveryMethod !== "delivery" ? "#666666" : undefined,
+              backgroundColor: deliveryMethod === "delivery" ? undefined : "white",
+            }}
+            className={`text-sm transition-colors ${
               deliveryMethod === "delivery"
-                ? "bg-[#ff6600] text-white shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
-            )}
+                ? "bg-[#ff6600] text-white"
+                : "text-[#666]"
+            }`}
           >
-            <Truck className="w-3.5 h-3.5" />
-            {locale === "ar" ? "توصيل" : "Delivery"}
-          </button>
-          <button
-            onClick={() => chooseMethod("pickup")}
-            className={cn(
-              "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all",
-              deliveryMethod === "pickup"
-                ? "bg-[#29ac00] text-white shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
-            )}
-          >
-            <Store className="w-3.5 h-3.5" />
-            {locale === "ar" ? "استلام" : "Pickup"}
+            {isEnglish ? "Delivery" : "توصيل"}
           </button>
         </div>
 
-        {/* Area / Branch Selector */}
-        {deliveryMethod === "delivery" ? (
-          <div className="relative">
-            <button
-              onClick={() => { setAreaOpen(!areaOpen); setBranchOpen(false); }}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg text-xs font-medium text-gray-600 transition-colors"
-            >
-              <span className="text-gray-400">{locale === "ar" ? "توصيل الى" : "Deliver to"}</span>
-              <span className="text-gray-900 font-semibold">{selectedArea || (locale === "ar" ? "اختر منطقة" : "Choose area")}</span>
-              <ChevronDown className="w-3 h-3 text-gray-400" />
-            </button>
-            {areaOpen && (
-              <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50 min-w-[180px]">
-                {AREAS.map((area) => (
-                  <button key={area} onClick={() => { setSelectedArea(area); setAreaOpen(false); }}
-                    className={cn("w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center justify-between",
-                      selectedArea === area && "text-[#ff6600] font-medium bg-[#ff6600]/5"
-                    )}>
-                    {area}
-                    {selectedArea === area && <Check className="w-3.5 h-3.5" />}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="relative">
-            <button
-              onClick={() => { setBranchOpen(!branchOpen); setAreaOpen(false); }}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg text-xs font-medium text-gray-600 transition-colors"
-            >
-              <span className="text-gray-400">{locale === "ar" ? "استلام من" : "Pickup from"}</span>
-              <span className="text-gray-900 font-semibold">{branchName || (locale === "ar" ? "اختر الفرع" : "Choose branch")}</span>
-              <ChevronDown className="w-3 h-3 text-gray-400" />
-            </button>
-            {branchOpen && (
-              <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50 min-w-[200px]">
-                {branches.filter((b) => b.active && b.pickupAvailable).map((b) => (
-                  <button key={b.id} onClick={() => chooseBranch(b.id)}
-                    className={cn("w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center justify-between",
-                      selectedBranch === b.id && "text-[#29ac00] font-medium bg-[#29ac00]/5"
-                    )}>
-                    {locale === "ar" ? b.nameAr : b.name}
-                    {selectedBranch === b.id && <Check className="w-3.5 h-3.5" />}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        <span className="text-[10px] text-gray-400 ml-auto hidden sm:inline">
-          {deliveryMethod === "delivery"
-            ? (locale === "ar" ? "أقرب وصول" : "Earliest arrival")
-            : (locale === "ar" ? "جاهز للاستلام" : "Ready for pickup")
-          }
-        </span>
+        {/* Pickup button */}
+        <div className="flex-1 max-w-[150px] flex items-center justify-center bg-white m-auto py-2">
+          <button
+            onClick={() => chooseMethod("pickup")}
+            style={{
+              lineHeight: 3,
+              width: "100%",
+              maxHeight: 40,
+              textTransform: "none",
+              fontWeight: "bold",
+              boxShadow: "none",
+              borderRadius: 3,
+              padding: "0 16px",
+              border: deliveryMethod !== "pickup" ? "1px solid #666666" : "none",
+              color: deliveryMethod !== "pickup" ? "#666666" : undefined,
+              backgroundColor: deliveryMethod === "pickup" ? undefined : "white",
+            }}
+            className={`text-sm transition-colors ${
+              deliveryMethod === "pickup"
+                ? "bg-[#ff6600] text-white"
+                : "text-[#666]"
+            }`}
+          >
+            {isEnglish ? "Pickup" : "استلام"}
+          </button>
+        </div>
       </div>
     </div>
   );
