@@ -1,23 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale } from "@/lib/locale";
-import { useCartStore } from "@/lib/store";
-import { Menu, Search, ShoppingCart, ArrowLeft, X, ChevronLeft } from "lucide-react";
+import { useCartStore, useCartItemCount } from "@/lib/store";
+import { Menu, Search, ShoppingCart, X, ChevronLeft } from "lucide-react";
 import type { Category } from "@/types";
 
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const { locale, setLocale } = useLocale();
-  const itemCount = useCartStore((s) => s.items.reduce((acc, i) => acc + i.quantity, 0));
+  const itemCount = useCartItemCount();
   const toggleCartDrawer = useCartStore((s) => s.toggleCartDrawer);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const isEnglish = locale === "en";
 
   useEffect(() => {
     fetch("/api/categories")
@@ -26,23 +27,23 @@ export default function Header() {
       .catch(() => {});
   }, []);
 
-  const toggleLocale = () => {
+  const toggleLocale = useCallback(() => {
     setLocale(locale === "en" ? "ar" : "en");
-  };
+  }, [locale, setLocale]);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
       setSearchOpen(false);
       setSearchQuery("");
     }
-  };
+  }, [searchQuery, router]);
 
-  const goBack = () => {
+  const goBack = useCallback(() => {
     if (pathname === "/") return;
     router.back();
-  };
+  }, [pathname, router]);
 
   const isHome = pathname === "/";
 
@@ -63,10 +64,10 @@ export default function Header() {
 
   return (
     <>
-      {/* Desktop Header — fixed at top of content panel, matching source site */}
+      {/* Desktop Header — matching source: 60px, white, border-bottom #dee2e6 */}
       <header
-        className="hidden md:flex sticky top-0 z-[1000] bg-white border-b items-center px-4 gap-3"
-        style={{ borderColor: "#dee2e6", height: 60 }}
+        className="hidden md:flex sticky top-0 z-[1000] bg-white border-b items-center px-4"
+        style={{ height: 60, borderColor: "#dee2e6" }}
       >
         {!isHome ? (
           <button onClick={goBack} className="p-1 -ml-1 rounded hover:bg-gray-100 shrink-0" aria-label="Back">
@@ -78,19 +79,10 @@ export default function Header() {
           </Link>
         )}
 
-        {!isHome && (
-          <div className="absolute left-1/2 -translate-x-1/2 text-center" style={{ width: "100%" }}>
-            <p className="text-[17px] font-semibold truncate max-w-[60%] mx-auto" style={{ maxHeight: 54 }}>
-              {/* Title rendered by parent on detail pages */}
-            </p>
-          </div>
-        )}
-
         <div className="flex items-center gap-2 ml-auto">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="header-button-cricle flex items-center justify-center"
-            style={{ minHeight: 40, borderRadius: 20, backgroundColor: "#fff", border: "1px solid #e5e7eb" }}
             aria-label="Menu"
           >
             <Menu className="w-5 h-5 text-gray-700" />
@@ -99,7 +91,6 @@ export default function Header() {
           <button
             onClick={() => setSearchOpen(!searchOpen)}
             className="header-button-cricle flex items-center justify-center"
-            style={{ minHeight: 40, borderRadius: 20, backgroundColor: "#fff", border: "1px solid #e5e7eb" }}
             aria-label="Search"
           >
             <Search className="w-5 h-5 text-gray-700" />
@@ -108,21 +99,38 @@ export default function Header() {
           <button
             onClick={toggleLocale}
             className="header-button-cricle flex items-center justify-center"
-            style={{ minHeight: 40, borderRadius: 20, backgroundColor: "#fff", border: "1px solid #e5e7eb", fontSize: 14, fontWeight: "bold" }}
+            style={{ fontSize: 14, fontWeight: "bold" }}
             aria-label="Toggle language"
           >
-            {locale === "en" ? "ع" : "En"}
+            {isEnglish ? "ع" : "En"}
           </button>
 
           <button
             onClick={toggleCartDrawer}
             className="relative header-button-cricle flex items-center justify-center"
-            style={{ minHeight: 40, borderRadius: 20, backgroundColor: "#fff", border: "1px solid #e5e7eb" }}
             aria-label="Cart"
           >
             <ShoppingCart className="w-5 h-5 text-gray-700" />
             {itemCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-[#ff6600] rounded-full">
+              <span
+                style={{
+                  position: "absolute",
+                  left: isEnglish ? 10 : undefined,
+                  right: isEnglish ? undefined : 10,
+                  top: 6,
+                  lineHeight: "34px",
+                  background: "rgba(0, 0, 0, 0.3)",
+                  borderRadius: 7,
+                  minWidth: 32,
+                  height: 32,
+                  fontSize: "1rem",
+                  color: "white",
+                  textAlign: "center",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
                 {itemCount > 99 ? "99+" : itemCount}
               </span>
             )}
@@ -137,12 +145,12 @@ export default function Header() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={locale === "ar" ? "بحث عن المنتجات..." : "Search products..."} autoFocus
+                  placeholder={isEnglish ? "Search products..." : "بحث عن المنتجات..."} autoFocus
                   className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff6600]/20 focus:border-[#ff6600]"
                 />
               </div>
               <button type="submit" className="px-5 py-2.5 bg-[#ff6600] text-white text-sm font-medium rounded-lg hover:bg-[#e55b00]">
-                {locale === "ar" ? "بحث" : "Search"}
+                {isEnglish ? "Search" : "بحث"}
               </button>
             </form>
           </div>
@@ -151,12 +159,12 @@ export default function Header() {
         {/* Desktop Menu Drawer */}
         {menuOpen && (
           <>
-            <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setMenuOpen(false)} />
-            <div className="fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-white z-[60] overflow-y-auto shadow-xl">
+            <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setMenuOpen(false)} onKeyDown={(e) => e.key === "Escape" && setMenuOpen(false)} />
+            <div className="fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-white z-[60] overflow-y-auto shadow-xl" role="dialog" aria-modal="true">
               <div className="p-5">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-bold text-gray-900">
-                    {locale === "ar" ? "التصنيفات" : "Categories"}
+                    {isEnglish ? "Categories" : "التصنيفات"}
                   </h3>
                   <button onClick={() => setMenuOpen(false)} className="p-2 hover:bg-gray-100 rounded-lg">
                     <X className="w-5 h-5" />
@@ -165,11 +173,11 @@ export default function Header() {
                 <nav className="space-y-1">
                   <Link href="/" onClick={() => setMenuOpen(false)}
                     className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50 font-medium">
-                    {locale === "ar" ? "الرئيسية" : "Home"}
+                    {isEnglish ? "Home" : "الرئيسية"}
                   </Link>
                   <Link href="/products" onClick={() => setMenuOpen(false)}
                     className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50 font-medium">
-                    {locale === "ar" ? "المنتجات" : "All Products"}
+                    {isEnglish ? "All Products" : "المنتجات"}
                   </Link>
                   {groupedCategories.map((group) => (
                     <div key={group.pt}>
@@ -178,7 +186,7 @@ export default function Header() {
                         onClick={() => setMenuOpen(false)}
                         className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50 font-medium"
                       >
-                        {locale === "ar" ? group.labelAr : group.labelEn}
+                        {isEnglish ? group.labelEn : group.labelAr}
                       </Link>
                       {group.categories.length > 0 && (
                         <div className="ml-4 space-y-0.5">
@@ -189,7 +197,7 @@ export default function Header() {
                               onClick={() => setMenuOpen(false)}
                               className="flex items-center justify-between px-3 py-1.5 rounded-lg text-xs text-gray-500 hover:bg-gray-50"
                             >
-                              <span>{locale === "ar" ? cat.nameAr : cat.name}</span>
+                              <span>{isEnglish ? cat.nameAr : cat.name}</span>
                               <span className="text-[10px] opacity-60">{cat.count}</span>
                             </Link>
                           ))}
@@ -200,15 +208,15 @@ export default function Header() {
                   <div className="border-t border-gray-100 my-2" />
                   <Link href="/locations" onClick={() => setMenuOpen(false)}
                     className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
-                    {locale === "ar" ? "الفروع" : "Locations"}
+                    {isEnglish ? "Locations" : "الفروع"}
                   </Link>
                   <Link href="/contact" onClick={() => setMenuOpen(false)}
                     className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
-                    {locale === "ar" ? "اتصل بنا" : "Contact Us"}
+                    {isEnglish ? "Contact Us" : "اتصل بنا"}
                   </Link>
                   <Link href="/about" onClick={() => setMenuOpen(false)}
                     className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
-                    {locale === "ar" ? "من نحن" : "About Us"}
+                    {isEnglish ? "About Us" : "من نحن"}
                   </Link>
                 </nav>
               </div>
@@ -217,7 +225,7 @@ export default function Header() {
         )}
       </header>
 
-      {/* Mobile Header — matching source: 60px height, fixed, border-bottom */}
+      {/* Mobile Header — matching source: 60px, fixed, border-bottom #dee2e6 */}
       <header className="md:hidden sticky top-0 z-[1000] bg-white border-b" style={{ borderColor: "#dee2e6", height: 60 }}>
         <div className="flex items-center h-[60px] px-3">
           {!isHome ? (
@@ -240,7 +248,7 @@ export default function Header() {
             </button>
 
             <button onClick={toggleLocale} className="p-1.5 rounded-lg text-xs font-bold text-gray-700" aria-label="Language">
-              {locale === "en" ? "ع" : "En"}
+              {isEnglish ? "ع" : "En"}
             </button>
 
             <button onClick={toggleCartDrawer} className="relative p-1.5 rounded-lg" aria-label="Cart">
@@ -262,7 +270,7 @@ export default function Header() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={locale === "ar" ? "بحث عن المنتجات..." : "Search products..."} autoFocus
+                  placeholder={isEnglish ? "Search products..." : "بحث عن المنتجات..."} autoFocus
                   className="w-full pl-10 pr-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff6600]/20"
                 />
               </div>

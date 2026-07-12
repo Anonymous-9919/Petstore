@@ -14,6 +14,7 @@ export const translations: Record<string, { en: string; ar: string }> = {
   "nav.general": { en: "General", ar: "عام" },
   "nav.more": { en: "More", ar: "المزيد" },
   "nav.locations": { en: "Our Branches", ar: "فروعنا" },
+  "locations.kuwait": { en: "Kuwait", ar: "الكويت" },
   "nav.contact": { en: "Contact", ar: "اتصل بنا" },
   "nav.cart": { en: "Cart", ar: "السلة" },
   "nav.checkout": { en: "Checkout", ar: "الدفع" },
@@ -21,6 +22,7 @@ export const translations: Record<string, { en: string; ar: string }> = {
   "nav.menu": { en: "Menu", ar: "القائمة" },
 
   // Hero
+  "hero.tagline": { en: "Your Dependable Partner in PetHood", ar: "شريكك الموثوق في عالم الحيوانات الأليفة" },
   "hero.badge": { en: "Kuwait's #1 Pet Store", ar: "أول متجر حيوانات في الكويت" },
   "hero.title1": { en: "Everything Your", ar: "كل ما يحتاجه" },
   "hero.title2": { en: "Pet Needs", ar: "حيوانك الأليف" },

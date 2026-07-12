@@ -2,7 +2,7 @@
 
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/translations";
-import { useCartStore } from "@/lib/store";
+import { useCartStore, useCartSummary } from "@/lib/store";
 import { formatKWD, cn } from "@/lib/utils";
 import Link from "next/link";
 import {
@@ -14,12 +14,13 @@ import BackButton from "@/components/ui/back-button";
 
 export default function CartPage() {
   const { locale } = useLocale();
-  const { items, removeItem, updateQuantity, deliveryMethod, setDeliveryMethod } = useCartStore();
+  const items = useCartStore((s) => s.items);
+  const removeItem = useCartStore((s) => s.removeItem);
+  const updateQuantity = useCartStore((s) => s.updateQuantity);
+  const deliveryMethod = useCartStore((s) => s.deliveryMethod);
+  const setDeliveryMethod = useCartStore((s) => s.setDeliveryMethod);
+  const { subtotal, deliveryFee, total } = useCartSummary();
   const isArabic = locale === "ar";
-
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const deliveryFee = deliveryMethod === "delivery" ? (subtotal >= 10 ? 0 : 2) : 0;
-  const total = subtotal + deliveryFee;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 pb-24 md:pb-8">

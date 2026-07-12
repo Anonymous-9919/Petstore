@@ -1,89 +1,78 @@
 "use client";
 
+import { useCallback } from "react";
 import { useLocale } from "@/lib/locale";
 import { useCartStore } from "@/lib/store";
 
-const STORAGE_KEY = "ps_fulfillment_method";
-const BRANCH_KEY = "ps_selected_branch";
-
 export default function DeliveryBar() {
   const { locale } = useLocale();
-  const { deliveryMethod, setDeliveryMethod, setSelectedBranch } = useCartStore();
+  const deliveryMethod = useCartStore((s) => s.deliveryMethod);
+  const setDeliveryMethod = useCartStore((s) => s.setDeliveryMethod);
+  const setSelectedBranch = useCartStore((s) => s.setSelectedBranch);
   const isEnglish = locale === "en";
 
-  const chooseMethod = (method: "delivery" | "pickup") => {
+  const chooseMethod = useCallback((method: "delivery" | "pickup") => {
     setDeliveryMethod(method);
-    try { window.sessionStorage.setItem(STORAGE_KEY, method); } catch {}
     if (method === "delivery") {
-      try { window.sessionStorage.removeItem(BRANCH_KEY); } catch {}
       setSelectedBranch("");
     }
-  };
+  }, [setDeliveryMethod, setSelectedBranch]);
 
   return (
     <div
-      className="w-full bg-white"
-      style={{ borderTop: "1px solid #dee2e6" }}
+      className="w-full bg-white flex items-center justify-center"
+      style={{ borderTop: "1px solid #dee2e6", borderBottom: "1px solid #dee2e6", minHeight: 65 }}
       dir={isEnglish ? "ltr" : "rtl"}
     >
-      <div
-        className="flex items-center justify-center bg-white border-b"
-        style={{ borderColor: "#dee2e6", minHeight: 65, whiteSpace: "nowrap" }}
+      {/* Delivery button — matching source: width:144px, height:42px, borderRadius:3, margin:15px */}
+      <button
+        onClick={() => chooseMethod("delivery")}
+        style={{
+          width: 144,
+          height: 42,
+          borderRadius: 3,
+          margin: "0 15px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          cursor: "pointer",
+          userSelect: "none",
+          fontWeight: "bold",
+          fontSize: 14,
+          fontFamily: "Quicksand, Cairo, sans-serif",
+          border: deliveryMethod === "delivery" ? "1px solid #ff6600" : "1px solid #666666",
+          backgroundColor: deliveryMethod === "delivery" ? "#ff6600" : "white",
+          color: deliveryMethod === "delivery" ? "white" : "#666666",
+          transition: "all 0.2s ease",
+        }}
       >
-        {/* Delivery button */}
-        <div className="flex-1 max-w-[150px] flex items-center justify-center bg-white m-auto py-2">
-          <button
-            onClick={() => chooseMethod("delivery")}
-            style={{
-              lineHeight: 3,
-              width: "100%",
-              maxHeight: 40,
-              textTransform: "none",
-              fontWeight: "bold",
-              boxShadow: "none",
-              borderRadius: 3,
-              padding: "0 16px",
-              border: deliveryMethod !== "delivery" ? "1px solid #666666" : "none",
-              color: deliveryMethod !== "delivery" ? "#666666" : undefined,
-              backgroundColor: deliveryMethod === "delivery" ? undefined : "white",
-            }}
-            className={`text-sm transition-colors ${
-              deliveryMethod === "delivery"
-                ? "bg-[#ff6600] text-white"
-                : "text-[#666]"
-            }`}
-          >
-            {isEnglish ? "Delivery" : "توصيل"}
-          </button>
-        </div>
+        {isEnglish ? "Delivery" : "توصيل"}
+      </button>
 
-        {/* Pickup button */}
-        <div className="flex-1 max-w-[150px] flex items-center justify-center bg-white m-auto py-2">
-          <button
-            onClick={() => chooseMethod("pickup")}
-            style={{
-              lineHeight: 3,
-              width: "100%",
-              maxHeight: 40,
-              textTransform: "none",
-              fontWeight: "bold",
-              boxShadow: "none",
-              borderRadius: 3,
-              padding: "0 16px",
-              border: deliveryMethod !== "pickup" ? "1px solid #666666" : "none",
-              color: deliveryMethod !== "pickup" ? "#666666" : undefined,
-              backgroundColor: deliveryMethod === "pickup" ? undefined : "white",
-            }}
-            className={`text-sm transition-colors ${
-              deliveryMethod === "pickup"
-                ? "bg-[#ff6600] text-white"
-                : "text-[#666]"
-            }`}
-          >
-            {isEnglish ? "Pickup" : "استلام"}
-          </button>
-        </div>
-      </div>
+      {/* Pickup button */}
+      <button
+        onClick={() => chooseMethod("pickup")}
+        style={{
+          width: 144,
+          height: 42,
+          borderRadius: 3,
+          margin: "0 15px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          cursor: "pointer",
+          userSelect: "none",
+          fontWeight: "bold",
+          fontSize: 14,
+          fontFamily: "Quicksand, Cairo, sans-serif",
+          border: deliveryMethod === "pickup" ? "1px solid #ff6600" : "1px solid #666666",
+          backgroundColor: deliveryMethod === "pickup" ? "#ff6600" : "white",
+          color: deliveryMethod === "pickup" ? "white" : "#666666",
+          transition: "all 0.2s ease",
+        }}
+      >
+        {isEnglish ? "Pickup" : "استلام"}
+      </button>
     </div>
   );
 }

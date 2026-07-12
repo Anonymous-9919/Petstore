@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/translations";
-import { useCartStore } from "@/lib/store";
+import { useCartStore, useCartSummary } from "@/lib/store";
 import { useBranches } from "@/lib/use-branches";
 import { formatKWD } from "@/lib/utils";
 import { CreditCard, Truck, Store, MapPin, User, Mail, Phone, Home, Building, Shield, Check, ChevronRight, ArrowLeft, ShoppingBag } from "@/lib/icons";
@@ -17,7 +17,10 @@ import BranchSelector from "@/components/checkout/branch-selector";
 export default function CheckoutPage() {
   const router = useRouter();
   const { locale } = useLocale();
-  const { items, deliveryMethod, setDeliveryMethod, clearCart } = useCartStore();
+  const items = useCartStore((s) => s.items);
+  const deliveryMethod = useCartStore((s) => s.deliveryMethod);
+  const setDeliveryMethod = useCartStore((s) => s.setDeliveryMethod);
+  const clearCart = useCartStore((s) => s.clearCart);
   const branches = useBranches();
   const isArabic = locale === "ar";
 
@@ -30,9 +33,7 @@ export default function CheckoutPage() {
     fullName: "", email: "", phone: "", area: "", street: "", building: "", floor: "", apartment: "", landmark: "",
   });
 
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const deliveryFee = useCartStore.getState().getDeliveryFee();
-  const total = subtotal + deliveryFee;
+  const { subtotal, deliveryFee, total } = useCartSummary();
 
   const updateField = (field: string, value: string) => setForm((p) => ({ ...p, [field]: value }));
 

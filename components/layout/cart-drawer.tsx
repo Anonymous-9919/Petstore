@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import Link from "next/link";
 import { t } from "@/lib/translations";
 import { useLocale } from "@/lib/locale";
-import { useCartStore } from "@/lib/store";
+import { useCartStore, useCartSummary } from "@/lib/store";
 import { cn, formatKWD } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Minus, Trash2, PawPrint, ShoppingCart } from "lucide-react";
@@ -18,12 +18,8 @@ export default function CartDrawer() {
   const items = useCartStore((s) => s.items);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
-
-  const subtotal = items.reduce((acc, i) => acc + i.price * i.quantity, 0);
-  const itemCount = items.reduce((acc, i) => acc + i.quantity, 0);
+  const { subtotal, itemCount, deliveryFee, total } = useCartSummary();
   const isDeliveryFree = subtotal >= DELIVERY_THRESHOLD;
-  const deliveryFee = isDeliveryFree ? 0 : 1;
-  const total = subtotal + deliveryFee;
 
   const handleUpdateQuantity = useCallback(
     (id: string, newQuantity: number) => {

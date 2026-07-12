@@ -1,9 +1,14 @@
 "use client";
 
 import { useLocale } from "@/lib/locale";
+import { t } from "@/lib/translations";
+import { useCartSummary } from "@/lib/store";
+import { formatKWD } from "@/lib/utils";
 
 export default function Footer() {
   const { locale } = useLocale();
+  const { subtotal, deliveryFee } = useCartSummary();
+  const isEnglish = locale === "en";
 
   return (
     <footer className="bg-white border-t border-gray-100 mt-6">
@@ -12,7 +17,7 @@ export default function Footer() {
         <div className="flex flex-col items-center mb-4">
           <img src="/logo.jpg" alt="Pet Store" className="h-10 w-auto object-contain mb-2" />
           <p className="text-xs text-gray-500 text-center">
-            {locale === "ar" ? "شريكك الموثوق في عالم الحيوانات الأليفة" : "Your Dependable Partner in PetHood"}
+            {t("hero.tagline", locale)}
           </p>
         </div>
 
@@ -26,7 +31,7 @@ export default function Footer() {
             +965 9880 5010
           </a>
           <div className="text-xs text-gray-400">
-            {locale === "ar" ? "الكويت" : "Kuwait"}
+            {t("locations.kuwait", locale)}
           </div>
         </div>
 
@@ -42,21 +47,18 @@ export default function Footer() {
 
         {/* Payment methods with SVG icons */}
         <div className="flex justify-center items-center gap-3 mb-4">
-          {/* KNET */}
           <div className="px-3 py-1.5 bg-gray-100 rounded-md flex items-center gap-1">
             <svg className="w-4 h-4 text-blue-700" viewBox="0 0 24 24" fill="currentColor">
               <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 17h2v-4H7v4zm4 0h2V7h-2v10zm4 0h2v-7h-2v7z"/>
             </svg>
             <span className="text-[10px] font-bold text-gray-600">KNET</span>
           </div>
-          {/* VISA */}
           <div className="px-3 py-1.5 bg-gray-100 rounded-md">
             <svg className="w-8 h-5" viewBox="0 0 48 32" fill="none">
               <rect width="48" height="32" rx="4" fill="#1A1F71"/>
               <path d="M19.5 21h-3l1.9-10h3l-1.9 10zm10.3-9.7c-.6-.2-1.5-.5-2.7-.5-2.9 0-5 1.5-5 3.7 0 1.6 1.5 2.5 2.6 3 1.2.6 1.6 1 1.6 1.5 0 .8-1 1.2-1.9 1.2-1.3 0-2-.2-3-.7l-.4-.2-.5 2.7c.7.3 2 .6 3.3.6 3.1 0 5.1-1.5 5.1-3.8 0-1.3-.8-2.2-2.5-3-.1 0-1-.5-1-1 0-.8.9-1.3 1.7-1.3 1 0 1.7.2 2.2.5l.3.1.5-2.6zm7.8-.3h-2.3c-.7 0-1.3.2-1.6.9l-4.5 9.1h3.2l.6-1.7h3.9l.4 1.7h2.8l-2.5-10zm-3.7 6.4l1.6-4.1.9 4.1h-2.5zM17.3 11.3l-2.9 6.6-.3-1.5c-.5-1.7-2.1-3.5-3.9-4.4l2.7 9.5h3.2l4.8-10.2h-3.6z" fill="white"/>
             </svg>
           </div>
-          {/* Mastercard */}
           <div className="px-3 py-1.5 bg-gray-100 rounded-md">
             <svg className="w-8 h-5" viewBox="0 0 48 32" fill="none">
               <rect width="48" height="32" rx="4" fill="#252525"/>
@@ -65,7 +67,6 @@ export default function Footer() {
               <path d="M24 10.2a8 8 0 010 11.6 8 8 0 000-11.6z" fill="#FF5F00"/>
             </svg>
           </div>
-          {/* Cash */}
           <div className="px-3 py-1.5 bg-gray-100 rounded-md flex items-center gap-1">
             <svg className="w-4 h-4 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2" y="6" width="20" height="12" rx="2"/>
@@ -78,7 +79,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="text-center text-[10px] text-gray-400">
-          &copy; {new Date().getFullYear()} Pet Store Kuwait. {locale === "ar" ? "جميع الحقوق محفوظة" : "All rights reserved"}
+          &copy; {new Date().getFullYear()} Pet Store Kuwait. {isEnglish ? "All rights reserved" : "جميع الحقوق محفوظة"}
         </div>
       </div>
     </footer>

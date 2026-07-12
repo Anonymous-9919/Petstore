@@ -17,6 +17,7 @@ export function StoreShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { locale } = useLocale();
   const isAdmin = pathname.startsWith("/admin");
+  const isEnglish = locale === "en";
 
   if (isAdmin) {
     return <>{children}</>;
@@ -28,20 +29,24 @@ export function StoreShell({ children }: { children: ReactNode }) {
           English: Content 5/12 (41.6vw) LEFT, Banner 7/12 (58.4vw) RIGHT
           Arabic: Content 5/12 RIGHT (ml-auto), Banner 7/12 LEFT */}
       <div className="hidden md:flex h-screen overflow-hidden">
-        {/* Left banner panel (English) / Right content (Arabic) */}
+        {/* Banner panel */}
         <div
           className="hidden md:block md:w-[58.4%] relative"
-          style={{ order: locale === "ar" ? -1 : 2 }}
+          style={{
+            order: isEnglish ? 2 : -1,
+            backgroundColor: "#f4f5f5",
+            position: "fixed",
+            left: isEnglish ? "41.64vw" : 0,
+            top: 0,
+            zIndex: 55,
+            height: "100vh",
+            overflowY: "hidden",
+          }}
         >
-          <div
-            className="h-full w-full overflow-hidden"
-            style={{ backgroundColor: "#f4f5f5", position: "fixed", left: locale === "ar" ? 0 : "41.64vw", top: 0, zIndex: 55 }}
-          >
-            <img src="/images/site/cover.jpeg" alt="Pet Store Kuwait" className="w-full h-full object-cover" />
-          </div>
+          <img src="/images/site/cover.jpeg" alt="Pet Store Kuwait" className="w-full h-full object-cover" loading="lazy" />
         </div>
 
-        {/* Right content panel (English) / Left content (Arabic) */}
+        {/* Content panel */}
         <div
           className="w-full md:w-[41.6%] flex flex-col"
           style={{
@@ -50,7 +55,7 @@ export function StoreShell({ children }: { children: ReactNode }) {
             overflowX: "hidden",
             minHeight: "calc(100% - 60px)",
             height: "calc(100% - 60px)",
-            marginLeft: locale === "ar" ? "auto" : undefined,
+            marginLeft: isEnglish ? undefined : "auto",
           }}
         >
           <Header />

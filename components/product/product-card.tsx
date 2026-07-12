@@ -1,10 +1,9 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo, useState, useCallback } from "react";
 import Link from "next/link";
-import { ShoppingCart, Plus, Minus } from "lucide-react";
 import { formatKWD } from "@/lib/utils";
-import { useCartStore } from "@/lib/store";
+import { useCartStore, useCartItemQuantity } from "@/lib/store";
 import { t } from "@/lib/translations";
 import type { Product } from "@/types";
 import type { Locale } from "@/lib/translations";
@@ -17,18 +16,19 @@ interface ProductCardProps {
 export const ProductCard = memo(function ProductCard({ product, locale }: ProductCardProps) {
   const addItem = useCartStore((s) => s.addItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
-  const cartQty = useCartStore((s) => s.items.find((i) => i.productId === product.id)?.quantity ?? 0);
+  const cartQty = useCartItemQuantity(product.id);
   const [imgError, setImgError] = useState(false);
 
-  const isInStock = "inStock" in product ? product.inStock : (product as any).stock > 0;
+  const isInStock = product.inStock;
   const imageSrc = product.images?.[0] || null;
+  const isEnglish = locale === "en";
 
   const savePercent =
     product.onSale && product.originalPrice
       ? Math.round((1 - product.price / product.originalPrice) * 100)
       : 0;
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleAddToCart = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!isInStock) return;
@@ -40,9 +40,9 @@ export const ProductCard = memo(function ProductCard({ product, locale }: Produc
       image: product.images?.[0],
       slug: product.slug,
     });
-  };
+  }, [product, isInStock, addItem]);
 
-  const handleIncrement = (e: React.MouseEvent) => {
+  const handleIncrement = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     addItem({
@@ -53,9 +53,9 @@ export const ProductCard = memo(function ProductCard({ product, locale }: Produc
       image: product.images?.[0],
       slug: product.slug,
     });
-  };
+  }, [product, addItem]);
 
-  const handleDecrement = (e: React.MouseEvent) => {
+  const handleDecrement = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (cartQty <= 1) {
@@ -63,31 +63,50 @@ export const ProductCard = memo(function ProductCard({ product, locale }: Produc
     } else {
       updateQuantity(product.id, cartQty - 1);
     }
-  };
+  }, [product.id, cartQty, updateQuantity]);
 
   return (
-    <Link href={`/products/${product.slug}`} className="block group">
-      <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow h-full flex flex-col">
+    <Link href={`/products/${product.slug}`} className="block group" prefetch>
+      <div
+        className="bg-white overflow-hidden relative"
+        style={{
+          borderRadius: 7,
+          minHeight: 240,
+          cursor: "pointer",
+        }}
+      >
         {/* Image */}
-        <div className="relative aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
+        <div
+          className="relative flex items-center justify-center overflow-hidden"
+          style={{ maxHeight: 240, minHeight: 240, borderRadius: 7 }}
+        >
           {imageSrc && !imgError ? (
             <img
               src={imageSrc}
-              alt={product.name}
+              alt={isEnglish ? product.name : (product.nameAr || product.name)}
               loading="lazy"
               decoding="async"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-contain preventDrag"
+              style={{ borderRadius: 7 }}
               onError={() => setImgError(true)}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-50 text-4xl">
+            <div className="w-full h-full flex items-center justify-center bg-gray-50 text-4xl" style={{ minHeight: 240 }}>
               🐾
             </div>
           )}
 
-          {/* Discount badge */}
+          {/* Discount badge — matching source: padding:1px 5px, borderRadius:3, fontSize:16px, top:8px */}
           {product.onSale && savePercent > 0 && (
-            <div className="absolute right-2 bg-red-500 text-white text-[16px] font-bold rounded-[3px] px-[5px] py-[1px]" style={{ top: "8px" }}>
+            <div
+              className="discount-sign"
+              style={{
+                right: isEnglish ? 10 : undefined,
+                left: isEnglish ? undefined : 10,
+                direction: "ltr",
+                zIndex: 100,
+              }}
+            >
               -{savePercent}%
             </div>
           )}
@@ -102,57 +121,123 @@ export const ProductCard = memo(function ProductCard({ product, locale }: Produc
           )}
         </div>
 
-        {/* Info */}
-        <div className="p-2.5 flex flex-col flex-1">
-          <h3 className="text-[13px] font-semibold text-gray-900 line-clamp-1 mb-0.5">
-            {locale === "ar" && product.nameAr ? product.nameAr : product.name}
-          </h3>
+        {/* Product Name — 14px, bold, height 40px */}
+        <p
+          className="text-black"
+          style={{
+            fontSize: 14,
+            fontWeight: "bold",
+            height: 40,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            padding: "8px 15px 0",
+            textDecoration: isInStock ? "none" : "line-through",
+            fontFamily: isEnglish ? "Quicksand" : "Cairo",
+            textAlign: isEnglish ? "left" : "right",
+            direction: isEnglish ? "ltr" : "rtl",
+          }}
+        >
+          {isEnglish ? product.name : (product.nameAr || product.name)}
+        </p>
 
-          {(product.description || product.descriptionAr) && (
-            <p className="text-[11px] text-gray-500 line-clamp-2 mb-1.5 leading-relaxed">
-              {locale === "ar" && product.descriptionAr ? product.descriptionAr : product.description}
-            </p>
-          )}
-
-          <div className="mt-auto">
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <span className="text-sm font-bold text-[#ff6600]">
-                {formatKWD(product.price)}
+        {/* Price — 14px, bold, theme color */}
+        <div
+          style={{
+            padding: "0 15px",
+            fontSize: 14,
+            fontWeight: "bold",
+            color: "#ff6600",
+            direction: isEnglish ? "ltr" : "rtl",
+            textAlign: isEnglish ? "left" : "right",
+          }}
+        >
+          {product.onSale && product.originalPrice ? (
+            <span style={{ position: "relative" }}>
+              <span style={{ textDecoration: "line-through", fontSize: 11, position: "absolute", top: -15, left: 6, color: "#999" }}>
+                {formatKWD(product.originalPrice)}
               </span>
-              {product.onSale && product.originalPrice && (
-                <span className="text-[10px] text-gray-400 line-through">
-                  {formatKWD(product.originalPrice)}
-                </span>
-              )}
-            </div>
+              <br />
+              {formatKWD(product.price)}
+            </span>
+          ) : (
+            formatKWD(product.price)
+          )}
+        </div>
 
-            {cartQty > 0 ? (
-              <div className="flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden">
-                <button
-                  onClick={handleDecrement}
-                  className="px-3 py-1.5 text-gray-600 hover:bg-gray-200 transition-colors"
-                >
-                  <Minus className="w-3.5 h-3.5" />
-                </button>
-                <span className="w-8 text-center text-xs font-bold text-gray-900">{cartQty}</span>
-                <button
-                  onClick={handleIncrement}
-                  className="px-3 py-1.5 text-gray-600 hover:bg-gray-200 transition-colors"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            ) : (
+        {/* Add to Cart / Quantity Controls */}
+        <div style={{ padding: "8px 15px 12px" }}>
+          {cartQty > 0 ? (
+            <div
+              className="flex items-center justify-between mx-auto"
+              style={{
+                width: 125,
+                backgroundColor: "white",
+                height: 30,
+                border: "1px solid #DEDEDE",
+                borderRadius: 50,
+              }}
+            >
               <button
-                onClick={handleAddToCart}
-                disabled={!isInStock}
-                className="w-full flex items-center justify-center gap-1.5 bg-[#29ac00] hover:bg-[#249000] disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-[11px] font-semibold py-1.5 rounded-lg transition-colors"
+                onClick={handleDecrement}
+                className="flex items-center justify-center"
+                style={{ width: 30 }}
               >
-                <ShoppingCart className="w-3 h-3" />
-                {t("product.add-to-cart", locale)}
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff6600" strokeWidth="2">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
               </button>
-            )}
-          </div>
+              <span
+                style={{
+                  color: "#ff6600",
+                  border: "1px solid #DEDEDE",
+                  width: 60,
+                  padding: "2px 0",
+                  textAlign: "center",
+                  fontSize: 14,
+                  borderTop: 0,
+                  borderBottom: 0,
+                }}
+              >
+                {cartQty}
+              </span>
+              <button
+                onClick={handleIncrement}
+                className="flex items-center justify-center"
+                style={{ width: 30 }}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff6600" strokeWidth="2">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={handleAddToCart}
+              disabled={!isInStock}
+              className="w-full flex items-center justify-center gap-1 disabled:cursor-not-allowed"
+              style={{
+                height: 30,
+                fontWeight: "bold",
+                border: isInStock ? "1px solid #29ac00" : "1px solid #ccc",
+                borderRadius: 3,
+                textTransform: "none",
+                fontSize: 14,
+                backgroundColor: isInStock ? "#29ac00" : "#ccc",
+                color: "white",
+                fontFamily: "Quicksand, Cairo, sans-serif",
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              {t("product.add-to-cart", locale)}
+            </button>
+          )}
         </div>
       </div>
     </Link>
@@ -161,5 +246,7 @@ export const ProductCard = memo(function ProductCard({ product, locale }: Produc
   prev.product.id === next.product.id &&
   prev.locale === next.locale &&
   prev.product.price === next.product.price &&
+  prev.product.onSale === next.product.onSale &&
+  prev.product.inStock === next.product.inStock &&
   prev.product.images?.[0] === next.product.images?.[0]
 );

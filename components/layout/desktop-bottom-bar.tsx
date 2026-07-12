@@ -2,15 +2,14 @@
 
 import Link from "next/link";
 import { useLocale } from "@/lib/locale";
-import { useCartStore } from "@/lib/store";
+import { useCartStore, useCartSummary } from "@/lib/store";
 import { ShoppingCart } from "lucide-react";
 import { formatKWD } from "@/lib/utils";
 
 export default function DesktopBottomBar() {
   const { locale } = useLocale();
   const isEnglish = locale === "en";
-  const itemCount = useCartStore((s) => s.items.reduce((acc, i) => acc + i.quantity, 0));
-  const subtotal = useCartStore((s) => s.items.reduce((acc, i) => acc + i.price * i.quantity, 0));
+  const { itemCount, subtotal } = useCartSummary();
   const toggleCartDrawer = useCartStore((s) => s.toggleCartDrawer);
 
   if (itemCount === 0) return null;

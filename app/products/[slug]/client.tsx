@@ -3,9 +3,9 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Minus, Plus, ShoppingCart, ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
+import { ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
 import { formatKWD } from "@/lib/utils";
-import { useCartStore } from "@/lib/store";
+import { useCartStore, useCartItemQuantity } from "@/lib/store";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/translations";
 import { ProductCard } from "@/components/product/product-card";
@@ -22,8 +22,8 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
   const isEnglish = locale === "en";
   const [quantity, setQuantity] = useState(1);
   const [currentImage, setCurrentImage] = useState(0);
-  const { addItem, getItemQuantity } = useCartStore();
-  const cartQty = getItemQuantity(product.id);
+  const addItem = useCartStore((s) => s.addItem);
+  const cartQty = useCartItemQuantity(product.id);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const images = product.images?.length > 0 ? product.images : ["/images/products/placeholder.svg"];
@@ -34,47 +34,42 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
 
   const addToCart = useCallback(() => {
     if (!product.inStock) return;
-    for (let i = 0; i < quantity; i++) {
-      addItem({
-        productId: product.id, name: product.name, nameAr: product.nameAr,
-        price: product.price, image: product.images[0], slug: product.slug,
-      });
-    }
+    addItem({
+      productId: product.id, name: product.name, nameAr: product.nameAr,
+      price: product.price, image: product.images[0], slug: product.slug,
+    }, quantity);
   }, [product, quantity, addItem]);
 
   const buyNow = useCallback(() => {
     if (!product.inStock) return;
-    for (let i = 0; i < quantity; i++) {
-      addItem({
-        productId: product.id, name: product.name, nameAr: product.nameAr,
-        price: product.price, image: product.images[0], slug: product.slug,
-      });
-    }
+    addItem({
+      productId: product.id, name: product.name, nameAr: product.nameAr,
+      price: product.price, image: product.images[0], slug: product.slug,
+    }, quantity);
     router.push("/cart");
   }, [product, quantity, addItem, router]);
 
-  const scrollImages = (dir: number) => {
+  const scrollImages = useCallback((dir: number) => {
     if (!scrollRef.current) return;
     const newIdx = Math.max(0, Math.min(images.length - 1, currentImage + dir));
     setCurrentImage(newIdx);
     scrollRef.current.scrollTo({ left: newIdx * scrollRef.current.clientWidth, behavior: "smooth" });
-  };
+  }, [currentImage, images.length]);
 
-  // Sync current image with scroll position
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
     const handleScroll = () => {
       const idx = Math.round(el.scrollLeft / el.clientWidth);
-      setCurrentImage(idx);
+      if (idx !== currentImage) setCurrentImage(idx);
     };
     el.addEventListener("scroll", handleScroll, { passive: true });
     return () => el.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [currentImage]);
 
   return (
-    <div style={{ minHeight: "100vh" }} className="noselect">
-      {/* Fixed Detail Header — matching source: 60px, fixed, z-1000, white, border-bottom */}
+    <div style={{ minHeight: "100vh", paddingBottom: 80 }}>
+      {/* Fixed Detail Header — 60px, white, border-bottom #dee2e6 */}
       <div
         className="md:hidden fixed top-0 left-0 right-0 z-[1000] bg-white border-b"
         style={{ height: 60, borderColor: "#dee2e6" }}
@@ -83,7 +78,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
           <button onClick={() => router.back()} className="p-1 -ml-1 rounded hover:bg-gray-100">
             <ChevronLeft className="w-6 h-6 text-black" />
           </button>
-          <div className="absolute left-0 right-0 text-center" style={{ width: "100%", left: 15 }}>
+          <div className="absolute left-0 right-0 text-center pointer-events-none" style={{ width: "100%", left: 15 }}>
             <p className="text-center font-semibold truncate mx-auto px-10" style={{ fontWeight: 600, fontSize: 17, maxHeight: 54, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
               {isEnglish ? product.name : (product.nameAr || product.name)}
             </p>
@@ -95,7 +90,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
       {/* Spacer for fixed header on mobile */}
       <div className="md:hidden" style={{ height: 60 }} />
 
-      {/* Image Carousel — auto-height, swipeable, matching source */}
+      {/* Image Carousel */}
       <div className="relative bg-white">
         <div
           ref={scrollRef}
@@ -119,17 +114,17 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
           ))}
         </div>
 
-        {/* Discount badge — matching source: top:8px, padding:1px 5px, borderRadius:3 */}
+        {/* Discount badge */}
         {product.onSale && savePercent > 0 && (
           <div
             className="discount-sign"
-            style={{ right: 10, color: "#fff", fontWeight: "bold", padding: "1px 5px", borderRadius: 3, textAlign: "center", fontSize: 16, top: 8, position: "absolute" as const }}
+            style={{ right: isEnglish ? 10 : undefined, left: isEnglish ? undefined : 10 }}
           >
             -{savePercent}%
           </div>
         )}
 
-        {/* Image navigation arrows */}
+        {/* Navigation arrows */}
         {images.length > 1 && (
           <>
             <button onClick={() => scrollImages(-1)} disabled={currentImage === 0}
@@ -140,7 +135,6 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
               className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 rounded-full flex items-center justify-center shadow disabled:opacity-30 z-10">
               <ChevronRight className="w-5 h-5" />
             </button>
-            {/* Dot indicators — max 6, matching source */}
             {images.length <= 6 && (
               <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
                 {images.map((_, i) => (
@@ -152,13 +146,24 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
         )}
       </div>
 
-      {/* Product Name + Price + Quantity (top) — matching source layout */}
+      {/* Product Name + Price + Quantity (top) — matching source */}
       <div className="bg-white border-t border-b" style={{ borderColor: "#dee2e6", lineHeight: "30px", minHeight: 45 }}>
         <div style={{ marginTop: 5 }}>
           {/* Product Name */}
           <span
-            className={`cut-text-one-line-product-name ${isEnglish ? "mx-3 text-left" : "text-right"}`}
-            style={{ direction: isEnglish ? "ltr" : "rtl", width: "97%", fontWeight: "bold", display: "-webkit-box", WebkitBoxOrient: "vertical" as any, overflow: "hidden", textOverflow: "ellipsis", WebkitLineClamp: 1 }}
+            className={`${isEnglish ? "mx-3 text-left" : "text-right"}`}
+            style={{
+              direction: isEnglish ? "ltr" : "rtl",
+              width: "97%",
+              fontWeight: "bold",
+              fontSize: 14,
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical" as any,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              WebkitLineClamp: 1,
+              fontFamily: "Quicksand, Cairo, sans-serif",
+            }}
           >
             {isEnglish ? product.name : (product.nameAr || product.name)}
           </span>
@@ -187,7 +192,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
               </div>
             </div>
 
-            {/* Quantity Stepper (top) — pill shape, matching source */}
+            {/* Quantity Stepper (top) — pill shape */}
             <div>
               {product.inStock && (
                 <div
@@ -208,7 +213,9 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     style={{ textAlign: "center", width: 30 }}
                   >
-                    <Minus style={{ color: "#ff6600", fontSize: 15, width: 15, height: 15 }} />
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff6600" strokeWidth="2">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
                   </button>
                   <div
                     style={{
@@ -230,7 +237,10 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
                     onClick={() => setQuantity(quantity + 1)}
                     style={{ textAlign: "center", width: 30 }}
                   >
-                    <Plus style={{ color: "#ff6600", fontSize: 15, width: 15, height: 15 }} />
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ff6600" strokeWidth="2">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
                   </button>
                 </div>
               )}
@@ -239,7 +249,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
         </div>
       </div>
 
-      {/* Description Section — matching source */}
+      {/* Description Section */}
       {product.description && (
         <div className="mt-4 mx-3" style={{ fontWeight: "bold" }}>
           <div className={`${isEnglish ? "text-left" : "text-right"}`}>
@@ -265,7 +275,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
         </div>
       )}
 
-      {/* Recommended Products — horizontal scroll, matching source */}
+      {/* Recommended Products — horizontal scroll */}
       {related.length > 0 && (
         <div style={{ marginTop: 30 }}>
           <p className="bold mb-2 box-title" style={{ padding: "0 10px", textAlign: isEnglish ? "left" : "right", fontWeight: "bold", color: "#5b5b5b", fontSize: "1rem" }}>
@@ -275,7 +285,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
             <div className="flex gap-3 overflow-x-auto scrollbar-hide px-2" style={{ width: "100%" }}>
               {related.map((p) => (
                 <div key={p.id} className="shrink-0" style={{ width: 150 }}>
-                  <ProductCard product={p} locale={locale as any} />
+                  <ProductCard product={p} locale={locale} />
                 </div>
               ))}
             </div>
@@ -302,7 +312,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
         <button
           onClick={addToCart}
           disabled={!product.inStock}
-          className="flex-1 flex items-center justify-center h-full mx-1"
+          className="flex-1 flex items-center justify-center h-full mx-1 relative"
           style={{
             boxShadow: "none",
             textTransform: "none",
@@ -313,10 +323,11 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
             border: "none",
             borderRadius: 4,
             cursor: product.inStock ? "pointer" : "not-allowed",
+            fontFamily: "Quicksand, Cairo, sans-serif",
           }}
         >
           {cartQty > 0 && (
-            <span className="px-1" style={{
+            <span style={{
               position: "absolute",
               left: isEnglish ? 10 : undefined,
               right: isEnglish ? undefined : 10,
@@ -327,6 +338,9 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
               minWidth: 32,
               height: 32,
               fontSize: "1rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}>
               {cartQty}
             </span>
@@ -350,6 +364,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
             fontWeight: "bold",
             fontSize: "1rem",
             cursor: product.inStock ? "pointer" : "not-allowed",
+            fontFamily: "Quicksand, Cairo, sans-serif",
           }}
         >
           {isEnglish ? "Buy now" : "اشترِ الان"}
