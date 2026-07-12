@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useShallow } from "zustand/react/shallow";
 import type { CartItem, DeliveryMethod } from "@/types";
 
 const DELIVERY_FEE = 1;
@@ -96,12 +97,12 @@ export function useCartItemQuantity(productId: string): number {
 }
 
 export function useCartSummary() {
-  return useCartStore((s) => {
+  return useCartStore(useShallow((s) => {
     const itemCount = s.items.reduce((acc, i) => acc + i.quantity, 0);
     const subtotal = s.items.reduce((acc, i) => acc + i.price * i.quantity, 0);
     const deliveryFee = s.deliveryMethod === "pickup" ? 0 : subtotal >= FREE_DELIVERY_MIN ? 0 : DELIVERY_FEE;
     return { itemCount, subtotal, deliveryFee, total: subtotal + deliveryFee };
-  });
+  }));
 }
 
 if (typeof window !== "undefined") {
