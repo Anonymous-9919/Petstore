@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { getProductBySlug, getRelatedProducts } from "@/lib/products";
 import ProductDetailClient from "./client";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function ProductPage({
   params,

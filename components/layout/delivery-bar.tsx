@@ -1,44 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocale } from "@/lib/locale";
 import { useCartStore } from "@/lib/store";
+import { useBranches } from "@/lib/use-branches";
 import { Truck, Store, ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "ps_fulfillment_method";
 const BRANCH_KEY = "ps_selected_branch";
 
-interface Branch {
-  id: string;
-  name: string;
-  nameAr: string;
-  pickupAvailable: boolean;
-  active: boolean;
-}
-
 const AREAS = ["Ahmadi", "Farwaniya", "Hawalli", "Jahra", "Capital", "Mubarak Al-Kabeer"];
 
 export default function DeliveryBar() {
   const { locale } = useLocale();
   const { deliveryMethod, selectedBranch, setDeliveryMethod, setSelectedBranch } = useCartStore();
-  const [branches, setBranches] = useState<Branch[]>([]);
+  const branches = useBranches();
   const [areaOpen, setAreaOpen] = useState(false);
   const [branchOpen, setBranchOpen] = useState(false);
   const [selectedArea, setSelectedArea] = useState("");
-
-  useEffect(() => {
-    fetch("/api/branches/public")
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data) => setBranches(data.filter((b: Branch) => b.active && b.pickupAvailable)))
-      .catch(() => {});
-    try {
-      const savedMethod = window.sessionStorage.getItem(STORAGE_KEY);
-      const savedBranch = window.sessionStorage.getItem(BRANCH_KEY);
-      if (savedMethod === "delivery" || savedMethod === "pickup") setDeliveryMethod(savedMethod);
-      if (savedBranch) setSelectedBranch(savedBranch);
-    } catch {}
-  }, []);
 
   const chooseMethod = (method: "delivery" | "pickup") => {
     setDeliveryMethod(method);
@@ -136,7 +116,7 @@ export default function DeliveryBar() {
             </button>
             {branchOpen && (
               <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50 min-w-[200px]">
-                {branches.map((b) => (
+                {branches.filter((b) => b.active && b.pickupAvailable).map((b) => (
                   <button key={b.id} onClick={() => chooseBranch(b.id)}
                     className={cn("w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center justify-between",
                       selectedBranch === b.id && "text-[#29ac00] font-medium bg-[#29ac00]/5"
@@ -150,7 +130,6 @@ export default function DeliveryBar() {
           </div>
         )}
 
-        {/* Earliest arrival / Ready for pickup */}
         <span className="text-[10px] text-gray-400 ml-auto hidden sm:inline">
           {deliveryMethod === "delivery"
             ? (locale === "ar" ? "أقرب وصول" : "Earliest arrival")

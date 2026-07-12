@@ -38,74 +38,69 @@ export default function CartDrawer() {
 
   const onClose = useCallback(() => setOpen(false), [setOpen]);
 
+  if (!open) return null;
+
   return (
     <AnimatePresence>
-      {open && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[90] bg-black/50"
-            onClick={onClose}
-          />
+      {/* Backdrop */}
+      <motion.div
+        key="cart-backdrop"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="fixed inset-0 z-[90] bg-black/50"
+        onClick={onClose}
+      />
 
-          {/* Drawer */}
-          <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
-            className={cn(
-              "fixed z-[95] bg-white shadow-2xl flex flex-col",
-              // Desktop: right panel
-              "hidden md:flex md:inset-y-0 md:right-0 md:w-[420px]",
-              "md:rounded-l-2xl"
-            )}
-          >
-            <CartDrawerContent
-              locale={locale}
-              items={items}
-              subtotal={subtotal}
-              itemCount={itemCount}
-              deliveryFee={deliveryFee}
-              total={total}
-              isDeliveryFree={isDeliveryFree}
-              onClose={onClose}
-              onUpdateQuantity={handleUpdateQuantity}
-              onRemoveItem={removeItem}
-            />
-          </motion.div>
+      {/* Desktop: right panel */}
+      <motion.div
+        key="cart-desktop"
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+        className="fixed inset-y-0 right-0 w-[420px] z-[95] bg-white shadow-2xl flex flex-col rounded-l-2xl max-md:hidden"
+      >
+        <CartDrawerContent
+          locale={locale}
+          items={items}
+          subtotal={subtotal}
+          itemCount={itemCount}
+          deliveryFee={deliveryFee}
+          total={total}
+          isDeliveryFree={isDeliveryFree}
+          onClose={onClose}
+          onUpdateQuantity={handleUpdateQuantity}
+          onRemoveItem={removeItem}
+        />
+      </motion.div>
 
-          {/* Mobile: slide-up drawer */}
-          <motion.div
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
-            className="fixed md:hidden z-[95] bottom-0 inset-x-0 max-h-[85vh] bg-white rounded-t-2xl shadow-2xl flex flex-col"
-          >
-            {/* Drag Handle */}
-            <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 rounded-full bg-gray-300" />
-            </div>
-            <CartDrawerContent
-              locale={locale}
-              items={items}
-              subtotal={subtotal}
-              itemCount={itemCount}
-              deliveryFee={deliveryFee}
-              total={total}
-              isDeliveryFree={isDeliveryFree}
-              onClose={onClose}
-              onUpdateQuantity={handleUpdateQuantity}
-              onRemoveItem={removeItem}
-            />
-          </motion.div>
-        </>
-      )}
+      {/* Mobile: slide-up drawer */}
+      <motion.div
+        key="cart-mobile"
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+        className="fixed bottom-0 inset-x-0 max-h-[85vh] z-[95] bg-white rounded-t-2xl shadow-2xl flex flex-col md:hidden"
+      >
+        <div className="flex justify-center pt-3 pb-1">
+          <div className="w-10 h-1 rounded-full bg-gray-300" />
+        </div>
+        <CartDrawerContent
+          locale={locale}
+          items={items}
+          subtotal={subtotal}
+          itemCount={itemCount}
+          deliveryFee={deliveryFee}
+          total={total}
+          isDeliveryFree={isDeliveryFree}
+          onClose={onClose}
+          onUpdateQuantity={handleUpdateQuantity}
+          onRemoveItem={removeItem}
+        />
+      </motion.div>
     </AnimatePresence>
   );
 }
@@ -196,7 +191,6 @@ function CartDrawerContent({
                 key={item.productId}
                 className="flex gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100"
               >
-                {/* Image */}
                 <div className="w-16 h-16 rounded-lg shrink-0 bg-gray-50 overflow-hidden flex items-center justify-center">
                   {item.image ? (
                     <img
@@ -218,7 +212,6 @@ function CartDrawerContent({
                   />
                 </div>
 
-                {/* Details */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="text-sm font-medium text-gray-900 truncate">
@@ -237,13 +230,10 @@ function CartDrawerContent({
                     {formatKWD(item.price)}
                   </p>
 
-                  {/* Quantity Controls */}
                   <div className="flex items-center justify-between mt-2">
                     <div className="flex items-center gap-0 bg-white border border-gray-200 rounded-lg overflow-hidden">
                       <button
-                        onClick={() =>
-                          onUpdateQuantity(item.productId, item.quantity - 1)
-                        }
+                        onClick={() => onUpdateQuantity(item.productId, item.quantity - 1)}
                         className="p-1.5 text-gray-500 hover:bg-gray-50 transition-colors"
                         aria-label="Decrease quantity"
                       >
@@ -253,9 +243,7 @@ function CartDrawerContent({
                         {item.quantity}
                       </span>
                       <button
-                        onClick={() =>
-                          onUpdateQuantity(item.productId, item.quantity + 1)
-                        }
+                        onClick={() => onUpdateQuantity(item.productId, item.quantity + 1)}
                         className="p-1.5 text-gray-500 hover:bg-gray-50 transition-colors"
                         aria-label="Increase quantity"
                       >
@@ -276,27 +264,15 @@ function CartDrawerContent({
       {/* Footer */}
       {items.length > 0 && (
         <div className="shrink-0 border-t border-gray-100 px-5 py-4 space-y-3">
-          {/* Summary */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-500">{t("cart.subtotal", locale)}</span>
-              <span className="font-medium text-gray-900">
-                {formatKWD(subtotal)}
-              </span>
+              <span className="font-medium text-gray-900">{formatKWD(subtotal)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-500">
-                {t("cart.delivery", locale)}
-              </span>
-              <span
-                className={cn(
-                  "font-medium",
-                  isDeliveryFree ? "text-[#29ac00]" : "text-gray-900"
-                )}
-              >
-                {isDeliveryFree
-                  ? t("cart.free", locale)
-                  : formatKWD(deliveryFee)}
+              <span className="text-gray-500">{t("cart.delivery", locale)}</span>
+              <span className={cn("font-medium", isDeliveryFree ? "text-[#29ac00]" : "text-gray-900")}>
+                {isDeliveryFree ? t("cart.free", locale) : formatKWD(deliveryFee)}
               </span>
             </div>
             {!isDeliveryFree && (
@@ -307,16 +283,11 @@ function CartDrawerContent({
               </p>
             )}
             <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-              <span className="text-base font-bold text-gray-900">
-                {t("cart.total", locale)}
-              </span>
-              <span className="text-base font-bold text-[#ff6600]">
-                {formatKWD(total)}
-              </span>
+              <span className="text-base font-bold text-gray-900">{t("cart.total", locale)}</span>
+              <span className="text-base font-bold text-[#ff6600]">{formatKWD(total)}</span>
             </div>
           </div>
 
-          {/* Action Buttons */}
           <Link
             href="/cart"
             onClick={onClose}

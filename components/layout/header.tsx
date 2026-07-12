@@ -5,7 +5,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale } from "@/lib/locale";
 import { useCartStore } from "@/lib/store";
-import { Menu, Search, ShoppingCart, ArrowLeft, X, Globe } from "lucide-react";
+import { Menu, Search, ShoppingCart, ArrowLeft, X } from "lucide-react";
+import type { Category } from "@/types";
 
 export default function Header() {
   const pathname = usePathname();
@@ -16,9 +17,14 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
 
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    fetch("/api/categories")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data: Category[]) => setCategories(data))
+      .catch(() => {});
+  }, []);
 
   const toggleLocale = () => {
     setLocale(locale === "en" ? "ar" : "en");
@@ -27,7 +33,7 @@ export default function Header() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/products?search=${encodeURIComponent(searchQuery.trim())}`;
+      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
       setSearchOpen(false);
       setSearchQuery("");
     }
@@ -40,18 +46,30 @@ export default function Header() {
 
   const isHome = pathname === "/";
 
+  const petTypeLinks = [
+    { pt: "cats", labelEn: "Cats", labelAr: "القطط" },
+    { pt: "dogs", labelEn: "Dogs", labelAr: "الكلاب" },
+    { pt: "birds", labelEn: "Birds", labelAr: "الطيور" },
+    { pt: "fish", labelEn: "Fish", labelAr: "الأسماك" },
+    { pt: "rabbits", labelEn: "Rabbits", labelAr: "الأرانب" },
+    { pt: "hamsters", labelEn: "Hamsters", labelAr: "الهامستر" },
+    { pt: "reptiles", labelEn: "Reptiles", labelAr: "الزواحف" },
+  ];
+
+  const groupedCategories = petTypeLinks.map((pt) => ({
+    ...pt,
+    categories: categories.filter((c) => c.petType === pt.pt),
+  }));
+
   return (
     <>
-      {/* Desktop Header - matches source: logo + circular pill buttons */}
+      {/* Desktop Header */}
       <header className="hidden md:flex sticky top-0 z-50 bg-white items-center h-[60px] px-4 gap-3">
-        {/* Logo */}
         <Link href="/" className="flex items-center shrink-0 mr-2">
           <img src="/logo.jpg" alt="Pet Store" className="h-[40px] w-auto object-contain" />
         </Link>
 
-        {/* Circular pill buttons like source site */}
         <div className="flex items-center gap-2 ml-auto">
-          {/* Menu / Hamburger */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="flex items-center justify-center w-[40px] h-[40px] rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
@@ -60,7 +78,6 @@ export default function Header() {
             <Menu className="w-5 h-5 text-gray-700" />
           </button>
 
-          {/* Search */}
           <button
             onClick={() => setSearchOpen(!searchOpen)}
             className="flex items-center justify-center w-[40px] h-[40px] rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
@@ -69,7 +86,6 @@ export default function Header() {
             <Search className="w-5 h-5 text-gray-700" />
           </button>
 
-          {/* Language */}
           <button
             onClick={toggleLocale}
             className="flex items-center justify-center w-[40px] h-[40px] rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors text-sm font-bold text-gray-700"
@@ -78,14 +94,13 @@ export default function Header() {
             {locale === "en" ? "ع" : "En"}
           </button>
 
-          {/* Cart */}
           <button
             onClick={toggleCartDrawer}
             className="relative flex items-center justify-center w-[40px] h-[40px] rounded-full bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
             aria-label="Cart"
           >
             <ShoppingCart className="w-5 h-5 text-gray-700" />
-            {mounted && itemCount > 0 && (
+            {itemCount > 0 && (
               <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-[#ff6600] rounded-full">
                 {itemCount > 99 ? "99+" : itemCount}
               </span>
@@ -112,7 +127,7 @@ export default function Header() {
           </div>
         )}
 
-        {/* Desktop Menu Drawer (Categories) */}
+        {/* Desktop Menu Drawer */}
         {menuOpen && (
           <>
             <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setMenuOpen(false)} />
@@ -135,34 +150,32 @@ export default function Header() {
                     className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50 font-medium">
                     {locale === "ar" ? "المنتجات" : "All Products"}
                   </Link>
-                  <Link href="/products?petType=cats" onClick={() => setMenuOpen(false)}
-                    className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
-                    {locale === "ar" ? "القطط" : "Cats"}
-                  </Link>
-                  <Link href="/products?petType=dogs" onClick={() => setMenuOpen(false)}
-                    className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
-                    {locale === "ar" ? "الكلاب" : "Dogs"}
-                  </Link>
-                  <Link href="/products?petType=birds" onClick={() => setMenuOpen(false)}
-                    className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
-                    {locale === "ar" ? "الطيور" : "Birds"}
-                  </Link>
-                  <Link href="/products?petType=fish" onClick={() => setMenuOpen(false)}
-                    className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
-                    {locale === "ar" ? "الأسماك" : "Fish"}
-                  </Link>
-                  <Link href="/products?petType=rabbits" onClick={() => setMenuOpen(false)}
-                    className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
-                    {locale === "ar" ? "الأرانب" : "Rabbits"}
-                  </Link>
-                  <Link href="/products?petType=hamsters" onClick={() => setMenuOpen(false)}
-                    className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
-                    {locale === "ar" ? "الهامستر" : "Hamsters"}
-                  </Link>
-                  <Link href="/products?petType=reptiles" onClick={() => setMenuOpen(false)}
-                    className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
-                    {locale === "ar" ? "الزواحف" : "Reptiles"}
-                  </Link>
+                  {groupedCategories.map((group) => (
+                    <div key={group.pt}>
+                      <Link
+                        href={`/products?petType=${group.pt}`}
+                        onClick={() => setMenuOpen(false)}
+                        className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50 font-medium"
+                      >
+                        {locale === "ar" ? group.labelAr : group.labelEn}
+                      </Link>
+                      {group.categories.length > 0 && (
+                        <div className="ml-4 space-y-0.5">
+                          {group.categories.map((cat) => (
+                            <Link
+                              key={cat.slug}
+                              href={`/products?category=${cat.slug}`}
+                              onClick={() => setMenuOpen(false)}
+                              className="flex items-center justify-between px-3 py-1.5 rounded-lg text-xs text-gray-500 hover:bg-gray-50"
+                            >
+                              <span>{locale === "ar" ? cat.nameAr : cat.name}</span>
+                              <span className="text-[10px] opacity-60">{cat.count}</span>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                   <div className="border-t border-gray-100 my-2" />
                   <Link href="/locations" onClick={() => setMenuOpen(false)}
                     className="block px-3 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
@@ -183,10 +196,9 @@ export default function Header() {
         )}
       </header>
 
-      {/* Mobile Header - matches source: back | logo (centered) | search | lang | cart */}
+      {/* Mobile Header */}
       <header className="md:hidden sticky top-0 z-50 bg-white border-b border-gray-100">
         <div className="flex items-center h-[50px] px-3">
-          {/* Back arrow (hidden on home) */}
           {!isHome ? (
             <button onClick={goBack} className="p-1.5 -ml-1 rounded-lg hover:bg-gray-100 shrink-0" aria-label="Back">
               <ArrowLeft className="w-5 h-5 text-gray-700" />
@@ -195,29 +207,24 @@ export default function Header() {
             <div className="w-8 shrink-0" />
           )}
 
-          {/* Logo centered */}
           <div className="flex-1 flex justify-center">
             <Link href="/">
               <img src="/logo.jpg" alt="Pet Store" className="h-[32px] w-auto object-contain" />
             </Link>
           </div>
 
-          {/* Right side buttons */}
           <div className="flex items-center gap-1.5 shrink-0">
-            {/* Search */}
             <button onClick={() => setSearchOpen(!searchOpen)} className="p-1.5 rounded-lg" aria-label="Search">
               <Search className="w-5 h-5 text-gray-700" />
             </button>
 
-            {/* Language */}
             <button onClick={toggleLocale} className="p-1.5 rounded-lg text-xs font-bold text-gray-700" aria-label="Language">
               {locale === "en" ? "ع" : "En"}
             </button>
 
-            {/* Cart */}
             <button onClick={toggleCartDrawer} className="relative p-1.5 rounded-lg" aria-label="Cart">
               <ShoppingCart className="w-5 h-5 text-gray-700" />
-              {mounted && itemCount > 0 && (
+              {itemCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[16px] h-4 px-0.5 text-[9px] font-bold text-white bg-[#ff6600] rounded-full">
                   {itemCount > 99 ? "99+" : itemCount}
                 </span>

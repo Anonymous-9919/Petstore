@@ -5,12 +5,13 @@ import dynamic from "next/dynamic";
 import type { ReactNode } from "react";
 import { useLocale } from "@/lib/locale";
 
-const Header = dynamic(() => import("@/components/layout/header"), { ssr: false });
-const DeliveryBar = dynamic(() => import("@/components/layout/delivery-bar"), { ssr: false });
-const BottomNav = dynamic(() => import("@/components/layout/bottom-nav"), { ssr: false });
+import Header from "@/components/layout/header";
+import DeliveryBar from "@/components/layout/delivery-bar";
+import BottomNav from "@/components/layout/bottom-nav";
+import Footer from "@/components/layout/footer";
+
 const CartDrawer = dynamic(() => import("@/components/layout/cart-drawer"), { ssr: false });
 const DesktopBottomBar = dynamic(() => import("@/components/layout/desktop-bottom-bar"), { ssr: false });
-const Footer = dynamic(() => import("@/components/layout/footer"), { ssr: false });
 
 export function StoreShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();

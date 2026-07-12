@@ -198,13 +198,15 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
         </button>
       </div>
 
-      {/* Related Products */}
+      {/* Related Products — horizontal scroll like source */}
       {related.length > 0 && (
-        <div className="px-4 pt-5 pb-4">
-          <h2 className="text-sm font-bold text-gray-900 mb-3">{t("product.related", locale)}</h2>
-          <div className="grid grid-cols-2 gap-3">
+        <div className="pt-5 pb-4">
+          <h2 className="text-sm font-bold text-gray-900 mb-3 px-4">{t("product.related", locale)}</h2>
+          <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-2">
             {related.map((p) => (
-              <ProductCard key={p.id} product={p} locale={locale as any} />
+              <div key={p.id} className="shrink-0 w-[150px]">
+                <ProductCard product={p} locale={locale as any} />
+              </div>
             ))}
           </div>
         </div>

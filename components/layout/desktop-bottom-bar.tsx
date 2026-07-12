@@ -4,13 +4,13 @@ import Link from "next/link";
 import { useLocale } from "@/lib/locale";
 import { useCartStore } from "@/lib/store";
 import { ShoppingCart } from "lucide-react";
+import { formatKWD } from "@/lib/utils";
 
 export default function DesktopBottomBar() {
   const { locale } = useLocale();
-  const items = useCartStore((s) => s.items);
+  const itemCount = useCartStore((s) => s.items.reduce((acc, i) => acc + i.quantity, 0));
+  const subtotal = useCartStore((s) => s.items.reduce((acc, i) => acc + i.price * i.quantity, 0));
   const toggleCartDrawer = useCartStore((s) => s.toggleCartDrawer);
-  const itemCount = items.reduce((acc, i) => acc + i.quantity, 0);
-  const subtotal = items.reduce((acc, i) => acc + i.price * i.quantity, 0);
 
   if (itemCount === 0) return null;
 
@@ -26,7 +26,7 @@ export default function DesktopBottomBar() {
         <div className="text-sm">
           <span className="font-semibold text-gray-900">{itemCount} {locale === "ar" ? "منتج" : "items"}</span>
           <span className="text-gray-400 mx-1.5">|</span>
-          <span className="font-bold text-[#ff6600]">{subtotal.toFixed(3)} {locale === "ar" ? "د.ك" : "KWD"}</span>
+          <span className="font-bold text-[#ff6600]">{formatKWD(subtotal)}</span>
         </div>
       </button>
       <Link href="/cart" className="px-4 py-2 bg-[#29ac00] text-white text-sm font-semibold rounded-lg hover:bg-[#229a00] transition-colors">

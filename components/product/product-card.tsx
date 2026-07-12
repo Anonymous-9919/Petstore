@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 import Link from "next/link";
 import { ShoppingCart, Plus, Minus } from "lucide-react";
 import { formatKWD } from "@/lib/utils";
@@ -14,13 +14,14 @@ interface ProductCardProps {
   locale: Locale;
 }
 
-export function ProductCard({ product, locale }: ProductCardProps) {
-  const { addItem, updateQuantity, getItemQuantity } = useCartStore();
+export const ProductCard = memo(function ProductCard({ product, locale }: ProductCardProps) {
+  const addItem = useCartStore((s) => s.addItem);
+  const updateQuantity = useCartStore((s) => s.updateQuantity);
+  const cartQty = useCartStore((s) => s.items.find((i) => i.productId === product.id)?.quantity ?? 0);
   const [imgError, setImgError] = useState(false);
 
   const isInStock = "inStock" in product ? product.inStock : (product as any).stock > 0;
   const imageSrc = product.images?.[0] || null;
-  const cartQty = getItemQuantity(product.id);
 
   const savePercent =
     product.onSale && product.originalPrice
@@ -84,9 +85,9 @@ export function ProductCard({ product, locale }: ProductCardProps) {
             </div>
           )}
 
-          {/* Discount badge - top right like source */}
+          {/* Discount badge */}
           {product.onSale && savePercent > 0 && (
-            <div className="absolute top-2 right-2 bg-red-500 text-white text-[11px] font-bold rounded px-1.5 py-0.5">
+            <div className="absolute right-2 bg-red-500 text-white text-[16px] font-bold rounded-[3px] px-[5px] py-[1px]" style={{ top: "8px" }}>
               -{savePercent}%
             </div>
           )}
@@ -101,14 +102,12 @@ export function ProductCard({ product, locale }: ProductCardProps) {
           )}
         </div>
 
-        {/* Info - matches source: title (1 line), description (2 lines), price, add-to-cart */}
+        {/* Info */}
         <div className="p-2.5 flex flex-col flex-1">
-          {/* Title - 1 line clamp like source's cut-text-one-line */}
           <h3 className="text-[13px] font-semibold text-gray-900 line-clamp-1 mb-0.5">
             {locale === "ar" && product.nameAr ? product.nameAr : product.name}
           </h3>
 
-          {/* Description - 2 lines like source's cut-text-two-lines-grid-view */}
           {(product.description || product.descriptionAr) && (
             <p className="text-[11px] text-gray-500 line-clamp-2 mb-1.5 leading-relaxed">
               {locale === "ar" && product.descriptionAr ? product.descriptionAr : product.description}
@@ -116,7 +115,6 @@ export function ProductCard({ product, locale }: ProductCardProps) {
           )}
 
           <div className="mt-auto">
-            {/* Price */}
             <div className="flex items-center gap-1.5 mb-1.5">
               <span className="text-sm font-bold text-[#ff6600]">
                 {formatKWD(product.price)}
@@ -128,7 +126,6 @@ export function ProductCard({ product, locale }: ProductCardProps) {
               )}
             </div>
 
-            {/* Quantity stepper (like source) or Add to Cart button */}
             {cartQty > 0 ? (
               <div className="flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden">
                 <button
@@ -160,4 +157,9 @@ export function ProductCard({ product, locale }: ProductCardProps) {
       </div>
     </Link>
   );
-}
+}, (prev, next) =>
+  prev.product.id === next.product.id &&
+  prev.locale === next.locale &&
+  prev.product.price === next.product.price &&
+  prev.product.images?.[0] === next.product.images?.[0]
+);

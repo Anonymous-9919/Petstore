@@ -11,6 +11,7 @@ import { Search, X, SlidersHorizontal, Grid3x3, List, MapPin, AlertCircle } from
 import { motion, AnimatePresence } from "framer-motion";
 import type { Category } from "@/types";
 import { useCartStore } from "@/lib/store";
+import { useBranches } from "@/lib/use-branches";
 import type { Product as TypeProduct } from "@/types";
 
 const petTypes = [
@@ -69,7 +70,9 @@ function toTypeProduct(p: ApiProduct): TypeProduct {
 export default function ProductsContent() {
   const searchParams = useSearchParams();
   const { locale } = useLocale();
-  const { selectedBranch, deliveryMethod } = useCartStore();
+  const selectedBranch = useCartStore((s) => s.selectedBranch);
+  const deliveryMethod = useCartStore((s) => s.deliveryMethod);
+  const branches = useBranches();
 
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("latest");
@@ -84,23 +87,22 @@ export default function ProductsContent() {
 
   const [allProducts, setAllProducts] = useState<ApiProduct[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [branchList, setBranchList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const branchName = branchList.find((b: any) => b.id === selectedBranch)?.name || "";
+  const branchName = branches.find((b) => b.id === selectedBranch)?.name || "";
 
-  // Fetch categories and branches once
+  // Memoize the mapped type products
+  const typeProducts = useMemo(
+    () => allProducts.map(toTypeProduct),
+    [allProducts]
+  );
+
+  // Fetch categories once
   useEffect(() => {
-    Promise.all([
-      fetch("/api/categories").then((r) => r.ok ? r.json() : []),
-      fetch("/api/branches/public").then((r) => r.ok ? r.json() : []),
-    ]).then(([cats, branches]) => {
-      setCategories(cats);
-      setBranchList(branches);
-    }).catch(() => {
-      setCategories([]);
-      setBranchList([]);
-    });
+    fetch("/api/categories")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((cats) => setCategories(cats))
+      .catch(() => setCategories([]));
   }, []);
 
   // Fetch products — filtered by branch if pickup
@@ -128,7 +130,7 @@ export default function ProductsContent() {
   }, [categories]);
 
   const filtered = useMemo(() => {
-    let result = [...allProducts];
+    let result = [...typeProducts];
     if (searchParams.get("sale") === "true") {
       result = result.filter((p) => p.onSale);
     }
@@ -143,7 +145,7 @@ export default function ProductsContent() {
         (p) =>
           p.name.toLowerCase().includes(q) ||
           p.description?.toLowerCase().includes(q) ||
-          p.category.name.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q) ||
           p.tags?.some((tag) => tag.toLowerCase().includes(q))
       );
     }
@@ -156,7 +158,7 @@ export default function ProductsContent() {
         result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }
     return result;
-  }, [allProducts, selectedCategory, selectedPetType, search, sort, searchParams]);
+  }, [typeProducts, selectedCategory, selectedPetType, search, sort, searchParams]);
 
   const handleSelectAll = () => {
     setSelectedCategory("");
@@ -182,8 +184,8 @@ export default function ProductsContent() {
         onClick={handleSelectAll}
         className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
           !selectedCategory && !selectedPetType
-            ? "bg-primary/10 text-primary font-medium"
-            : "text-text-muted hover:text-text hover:bg-surface"
+            ? "bg-[#ff6600]/10 text-[#ff6600] font-medium"
+            : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
         }`}
       >
         {t("product.all", locale)}
@@ -197,7 +199,7 @@ export default function ProductsContent() {
             <button
               onClick={() => handleSelectPetType(pt)}
               className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive ? "bg-primary/10 text-primary" : "text-text hover:bg-surface"
+                isActive ? "bg-[#ff6600]/10 text-[#ff6600]" : "text-gray-900 hover:bg-gray-100"
               }`}
             >
               <PetIcon petType={pt} size={16} />
@@ -210,8 +212,8 @@ export default function ProductsContent() {
                   onClick={() => handleSelectCategory(cat.slug, pt)}
                   className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-xs transition-colors ${
                     selectedCategory === cat.slug
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-text-muted hover:text-text hover:bg-surface/50"
+                      ? "bg-[#ff6600]/10 text-[#ff6600] font-medium"
+                      : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
                   }`}
                 >
                   <span>{cat.name}</span>
@@ -249,10 +251,10 @@ export default function ProductsContent() {
       )}
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl md:text-4xl font-bold text-text mb-2">
+        <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2">
           {t("product.all", locale)}
         </h1>
-        <p className="text-text-muted text-sm mb-6">
+        <p className="text-gray-500 text-sm mb-6">
           {filtered.length} {t("product.found", locale)}
           {loading && " (loading...)"}
         </p>
@@ -260,20 +262,20 @@ export default function ProductsContent() {
 
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
             placeholder={t("product.search", locale)}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl bg-surface/50 border border-border pl-10 pr-4 py-3 text-sm text-text placeholder:text-text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full rounded-xl bg-gray-50 border border-gray-200 pl-10 pr-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff6600]/20"
           />
         </div>
         <div className="flex gap-2">
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
-            className="rounded-xl bg-surface/50 border border-border px-3 py-3 text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="rounded-xl bg-gray-50 border border-gray-200 px-3 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#ff6600]/20"
           >
             <option value="latest">{t("product.sort-latest", locale)}</option>
             <option value="price-asc">{t("product.sort-price-asc", locale)}</option>
@@ -281,16 +283,16 @@ export default function ProductsContent() {
             <option value="rating">{t("product.sort-rating", locale)}</option>
             <option value="name">{t("product.sort-name", locale)}</option>
           </select>
-          <div className="hidden sm:flex rounded-xl border border-border overflow-hidden">
-            <button onClick={() => setView("grid")} className={`p-3 transition-colors ${view === "grid" ? "bg-primary text-white" : "bg-surface/50 text-text-muted hover:text-text"}`}>
+          <div className="hidden sm:flex rounded-xl border border-gray-200 overflow-hidden">
+            <button onClick={() => setView("grid")} className={`p-3 transition-colors ${view === "grid" ? "bg-[#ff6600] text-white" : "bg-gray-50 text-gray-400 hover:text-gray-900"}`}>
               <Grid3x3 className="w-4 h-4" />
             </button>
-            <button onClick={() => setView("list")} className={`p-3 transition-colors ${view === "list" ? "bg-primary text-white" : "bg-surface/50 text-text-muted hover:text-text"}`}>
+            <button onClick={() => setView("list")} className={`p-3 transition-colors ${view === "list" ? "bg-[#ff6600] text-white" : "bg-gray-50 text-gray-400 hover:text-gray-900"}`}>
               <List className="w-4 h-4" />
             </button>
           </div>
-          <button onClick={() => setMobileFiltersOpen(true)} className="md:hidden p-3 rounded-xl bg-surface/50 border border-border">
-            <SlidersHorizontal className="w-4 h-4 text-text" />
+          <button onClick={() => setMobileFiltersOpen(true)} className="md:hidden p-3 rounded-xl bg-gray-50 border border-gray-200">
+            <SlidersHorizontal className="w-4 h-4 text-gray-900" />
           </button>
         </div>
       </div>
@@ -315,9 +317,9 @@ export default function ProductsContent() {
               >
                 <div className="p-5">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-semibold text-text">{t("section.shop-by-pet", locale)}</h3>
+                    <h3 className="font-semibold text-gray-900">{t("section.shop-by-pet", locale)}</h3>
                     <button onClick={() => setMobileFiltersOpen(false)}>
-                      <X className="w-5 h-5 text-text-muted" />
+                      <X className="w-5 h-5 text-gray-400" />
                     </button>
                   </div>
                   {sidebarContent}
@@ -330,7 +332,7 @@ export default function ProductsContent() {
         <div className="flex-1 min-w-0">
           {selectedCategory && (
             <div className="flex items-center gap-2 mb-4">
-              <span className="inline-flex items-center rounded-full bg-primary/10 text-primary px-3 py-1 text-xs font-medium">
+              <span className="inline-flex items-center rounded-full bg-[#ff6600]/10 text-[#ff6600] px-3 py-1 text-xs font-medium">
                 {categories.find((c) => c.slug === selectedCategory)?.name}
                 <button onClick={handleSelectAll} className="ml-1.5">
                   <X className="w-3 h-3" />
@@ -342,12 +344,12 @@ export default function ProductsContent() {
           {filtered.length === 0 && !loading ? (
             <div className="text-center py-20">
               <AlertCircle className="w-12 h-12 mx-auto text-gray-300 mb-3" />
-              <p className="text-text-muted text-lg font-medium">
+              <p className="text-gray-500 text-lg font-medium">
                 {selectedBranch
                   ? (locale === "ar" ? "لا توجد منتجات متوفرة في هذا الفرع" : "No products available at this branch")
                   : t("product.not-found", locale)}
               </p>
-              <button onClick={handleSelectAll} className="mt-3 text-sm text-primary hover:underline">
+              <button onClick={handleSelectAll} className="mt-3 text-sm text-[#ff6600] hover:underline">
                 {t("product.clear-filter", locale)}
               </button>
             </div>
@@ -359,12 +361,9 @@ export default function ProductsContent() {
                   : "grid grid-cols-1 sm:grid-cols-2 gap-4"
               }
             >
-              {filtered.map((product, i) => (
-                <div
-                  key={product.id}
-                  className="h-full"
-                >
-                  <ProductCard product={toTypeProduct(product)} locale={locale} />
+              {filtered.map((product) => (
+                <div key={product.id} className="h-full">
+                  <ProductCard product={product} locale={locale} />
                 </div>
               ))}
             </div>
@@ -374,3 +373,5 @@ export default function ProductsContent() {
     </div>
   );
 }
+
+

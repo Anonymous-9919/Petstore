@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/translations";
 import { useCartStore } from "@/lib/store";
+import { useBranches } from "@/lib/use-branches";
 import { formatKWD } from "@/lib/utils";
-import type { Branch } from "@/types";
 import { CreditCard, Truck, Store, MapPin, User, Mail, Phone, Home, Building, Shield, Check, ChevronRight, ArrowLeft, ShoppingBag } from "@/lib/icons";
 import { motion, AnimatePresence } from "framer-motion";
 import Button from "@/components/ui/button";
@@ -18,14 +18,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { locale } = useLocale();
   const { items, deliveryMethod, setDeliveryMethod, clearCart } = useCartStore();
-  const [branches, setBranches] = useState<Branch[]>([]);
-
-  useEffect(() => {
-    fetch("/api/branches/public")
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data) => setBranches(data))
-      .catch(() => setBranches([]));
-  }, []);
+  const branches = useBranches();
   const isArabic = locale === "ar";
 
   const [selectedPayment, setSelectedPayment] = useState<"knet" | "credit-card" | "apple-pay" | "google-pay" | "cod">("knet");

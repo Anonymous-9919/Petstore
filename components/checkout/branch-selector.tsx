@@ -3,11 +3,20 @@
 import { Check, MapPin, Clock } from "@/lib/icons";
 import { useCartStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
-import type { Branch } from "@/types";
 import type { Locale } from "@/lib/translations";
 
+interface BranchSelectorBranch {
+  id: string;
+  name: string;
+  nameAr: string;
+  address: string;
+  addressAr: string;
+  hours: string;
+  hoursAr: string;
+}
+
 interface BranchSelectorProps {
-  branches: Branch[];
+  branches: BranchSelectorBranch[];
   locale: Locale;
 }
 
