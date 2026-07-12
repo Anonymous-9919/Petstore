@@ -1,30 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { Star, Minus, Plus, ShoppingCart, ChevronRight, ShoppingBag, PawPrint } from "@/lib/icons";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Minus, Plus, ShoppingCart, ChevronLeft, ChevronRight, ArrowLeft, Send } from "lucide-react";
 import { formatKWD } from "@/lib/utils";
 import { useCartStore } from "@/lib/store";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/translations";
 import { ProductCard } from "@/components/product/product-card";
-import BackButton from "@/components/ui/back-button";
 import type { Product } from "@/types";
-
-const petEmoji: Record<string, string> = {
-  cats: "🐱", dogs: "🐶", birds: "🐦", fish: "🐟",
-  rabbits: "🐰", hamsters: "🐹", reptiles: "🦎", general: "🐾",
-};
-
-const petBg: Record<string, string> = {
-  cats: "bg-orange-50", dogs: "bg-blue-50", birds: "bg-yellow-50",
-  fish: "bg-cyan-50", rabbits: "bg-pink-50", hamsters: "bg-amber-50",
-  reptiles: "bg-green-50", general: "bg-gray-50",
-};
 
 interface ProductDetailClientProps {
   product: Product;
@@ -35,9 +20,12 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
   const router = useRouter();
   const { locale } = useLocale();
   const [quantity, setQuantity] = useState(1);
+  const [currentImage, setCurrentImage] = useState(0);
   const { addItem, getItemQuantity } = useCartStore();
   const cartQty = getItemQuantity(product.id);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
+  const images = product.images?.length > 0 ? product.images : ["/images/products/placeholder.svg"];
   const savePercent =
     product.onSale && product.originalPrice
       ? Math.round((1 - product.price / product.originalPrice) * 100)
@@ -64,126 +52,161 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
     router.push("/cart");
   };
 
+  const scrollImages = (dir: number) => {
+    if (!scrollRef.current) return;
+    const newIdx = Math.max(0, Math.min(images.length - 1, currentImage + dir));
+    setCurrentImage(newIdx);
+    scrollRef.current.scrollTo({ left: newIdx * scrollRef.current.clientWidth, behavior: "smooth" });
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6 md:py-10 pb-24 md:pb-10">
-      <BackButton href="/products" />
-      <nav className="flex items-center gap-2 text-sm text-text-muted mb-6 overflow-x-auto no-scrollbar">
-        <Link href="/" className="hover:text-primary transition-colors shrink-0">{t("nav.home", locale)}</Link>
-        <ChevronRight className="w-3.5 h-3.5 shrink-0" />
-        <Link href="/products" className="hover:text-primary transition-colors shrink-0">{t("nav.shop", locale)}</Link>
-        <ChevronRight className="w-3.5 h-3.5 shrink-0" />
-        <span className="text-text shrink-0">{product.category}</span>
-        <ChevronRight className="w-3.5 h-3.5 shrink-0" />
-        <span className="text-text font-medium truncate">{product.name}</span>
-      </nav>
-
-      <div className="grid md:grid-cols-2 gap-8 md:gap-12">
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-          <div className={`aspect-square ${petBg[product.petType] || "bg-gray-50"} rounded-2xl flex items-center justify-center relative overflow-hidden`}>
-            {product.images?.[0] ? (
-              <img src={product.images[0]} alt={product.name} className="w-full h-full object-contain p-4" loading="eager" />
-            ) : (
-              <span className="text-8xl">{petEmoji[product.petType] || "🐾"}</span>
-            )}
-            <div className="absolute top-4 left-4 flex flex-col gap-2">
-              {product.onSale && <Badge variant="sale">{t("badge.sale", locale)}</Badge>}
-              {!product.inStock && (
-                <Badge variant="default" className="bg-red-100 text-red-600">
-                  {t("badge.out-of-stock", locale)}
-                </Badge>
-              )}
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="flex flex-col">
-          <p className="text-sm text-primary font-medium mb-2">{product.category}</p>
-          <h1 className="text-2xl md:text-3xl font-bold text-text mb-3">{product.name}</h1>
-
-          <div className="flex items-center gap-1.5 mb-4">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star key={i} className={`w-4 h-4 ${i < Math.round(product.rating) ? "fill-primary text-primary" : "fill-gray-200 text-gray-200"}`} />
-            ))}
-            <span className="text-sm font-medium text-text">{product.rating}</span>
-            <span className="text-sm text-text-muted">({product.reviewCount} {t("product.reviews", locale)})</span>
-          </div>
-
-          <div className="flex items-center gap-3 mb-5">
-            <span className="text-3xl font-extrabold text-primary">{formatKWD(product.price)}</span>
-            {product.onSale && product.originalPrice && (
-              <>
-                <span className="text-lg text-text-muted line-through">{formatKWD(product.originalPrice)}</span>
-                <span className="inline-flex items-center rounded-full bg-red-100 text-red-600 px-2.5 py-0.5 text-xs font-semibold">
-                  {t("product.save", locale)} {savePercent}%
-                </span>
-              </>
-            )}
-          </div>
-
-          <p className="text-text-muted text-sm leading-relaxed mb-5">{product.description}</p>
-
-          <div className="mb-5">
-            <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${product.inStock ? "bg-success-light text-success" : "bg-error-light text-error"}`}>
-              {product.inStock ? t("product.in-stock", locale) : t("product.out-of-stock", locale)}
-            </span>
-          </div>
-
-          <div className="space-y-4 mb-6">
-            <div className="flex items-center gap-3">
-              <span className="text-base font-semibold text-text">{t("product.quantity", locale)}</span>
-              <div className="flex items-center rounded-xl border-2 border-border overflow-hidden">
-                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-3.5 hover:bg-surface transition-colors">
-                  <Minus className="w-5 h-5" />
-                </button>
-                <AnimatePresence mode="wait">
-                  <motion.span key={quantity} initial={{ y: -8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 8, opacity: 0 }} transition={{ duration: 0.15 }} className="w-14 text-center font-extrabold text-lg">
-                    {quantity}
-                  </motion.span>
-                </AnimatePresence>
-                <button onClick={() => setQuantity(quantity + 1)} className="p-3.5 hover:bg-surface transition-colors">
-                  <Plus className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
-            <AnimatePresence mode="wait">
-              {cartQty > 0 ? (
-                <motion.div key="in-cart-actions" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-2">
-                  <Button size="lg" variant="secondary" className="w-full h-12 sm:h-14 text-base sm:text-lg font-bold" onClick={() => useCartStore.getState().setCartDrawerOpen(true)}>
-                    <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
-                    {t("product.view-cart", locale)} ({cartQty})
-                  </Button>
-                  <Button size="lg" variant="primary" className="w-full h-12 sm:h-14 text-base sm:text-lg font-bold" onClick={buyNow}>
-                    <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
-                    {t("product.buy-now", locale)}
-                  </Button>
-                </motion.div>
-              ) : (
-                <motion.div key="add-actions" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="space-y-2">
-                  <Button size="lg" variant="secondary" className="w-full h-12 sm:h-14 text-base sm:text-lg font-bold" disabled={!product.inStock} onClick={addToCart}>
-                    <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
-                    {t("product.add-to-cart", locale)}
-                  </Button>
-                  <Button size="lg" variant="primary" className="w-full h-12 sm:h-14 text-base sm:text-lg font-bold" disabled={!product.inStock} onClick={buyNow}>
-                    <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
-                    {t("product.buy-now", locale)}
-                  </Button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </motion.div>
+    <div className="pb-20 md:pb-0">
+      {/* Fixed Detail Header like source site */}
+      <div className="sticky top-0 z-40 bg-white border-b border-gray-100 md:hidden">
+        <div className="flex items-center h-[48px] px-3">
+          <button onClick={() => router.back()} className="p-1.5 -ml-1 rounded-lg hover:bg-gray-100">
+            <ArrowLeft className="w-5 h-5 text-gray-700" />
+          </button>
+          <h1 className="flex-1 text-center text-sm font-medium text-gray-900 truncate px-3">
+            {locale === "ar" && product.nameAr ? product.nameAr : product.name}
+          </h1>
+          <button onClick={() => { navigator.share?.({ title: product.name, url: window.location.href }).catch(() => {}); }}
+            className="p-1.5 rounded-lg hover:bg-gray-100">
+            <Send className="w-5 h-5 text-gray-700" />
+          </button>
+        </div>
       </div>
 
+      {/* Image Carousel - like source site */}
+      <div className="relative bg-white">
+        <div ref={scrollRef} className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide" style={{ scrollSnapType: "x mandatory" }}>
+          {images.map((img, i) => (
+            <div key={i} className="shrink-0 w-full snap-center aspect-square bg-white flex items-center justify-center">
+              <img src={img} alt={`${product.name} ${i + 1}`} className="w-full h-full object-contain p-4" loading={i === 0 ? "eager" : "lazy"} />
+            </div>
+          ))}
+        </div>
+
+        {/* Discount badge */}
+        {product.onSale && savePercent > 0 && (
+          <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold rounded px-2 py-1">
+            -{savePercent}%
+          </div>
+        )}
+
+        {/* Out of stock */}
+        {!product.inStock && (
+          <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold rounded px-2 py-1">
+            {t("badge.out-of-stock", locale)}
+          </div>
+        )}
+
+        {/* Image navigation arrows */}
+        {images.length > 1 && (
+          <>
+            <button onClick={() => scrollImages(-1)} disabled={currentImage === 0}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 rounded-full flex items-center justify-center shadow disabled:opacity-30">
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button onClick={() => scrollImages(1)} disabled={currentImage === images.length - 1}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 rounded-full flex items-center justify-center shadow disabled:opacity-30">
+              <ChevronRight className="w-5 h-5" />
+            </button>
+            {/* Dots indicator */}
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+              {images.map((_, i) => (
+                <div key={i} className={`w-2 h-2 rounded-full transition-colors ${i === currentImage ? "bg-[#ff6600]" : "bg-gray-300"}`} />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Product Info */}
+      <div className="bg-white px-4 py-4 border-t border-gray-100">
+        {/* Category */}
+        <p className="text-xs text-[#ff6600] font-medium mb-1">{product.category}</p>
+
+        {/* Name */}
+        <h1 className="text-lg font-bold text-gray-900 mb-2">
+          {locale === "ar" && product.nameAr ? product.nameAr : product.name}
+        </h1>
+
+        {/* Price */}
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-xl font-bold text-[#ff6600]">{formatKWD(product.price)}</span>
+          {product.onSale && product.originalPrice && (
+            <>
+              <span className="text-sm text-gray-400 line-through">{formatKWD(product.originalPrice)}</span>
+              <span className="text-xs font-semibold text-red-500 bg-red-50 px-2 py-0.5 rounded">
+                {t("product.save", locale)} {savePercent}%
+              </span>
+            </>
+          )}
+        </div>
+
+        {/* Description */}
+        {product.description && (
+          <p className="text-sm text-gray-600 leading-relaxed mb-4">
+            {locale === "ar" && product.descriptionAr ? product.descriptionAr : product.description}
+          </p>
+        )}
+
+        {/* Stock status */}
+        <div className="mb-4">
+          <span className={`text-xs font-semibold px-2.5 py-1 rounded ${product.inStock ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"}`}>
+            {product.inStock ? t("product.in-stock", locale) : t("product.out-of-stock", locale)}
+          </span>
+        </div>
+
+        {/* Quantity + Add to Cart - like source site */}
+        <div className="flex items-center gap-3 mb-4">
+          {/* Quantity stepper */}
+          <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+            <button onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              className="px-3 py-2.5 text-gray-600 hover:bg-gray-50 transition-colors">
+              <Minus className="w-4 h-4" />
+            </button>
+            <span className="w-10 text-center text-sm font-bold text-gray-900">{quantity}</span>
+            <button onClick={() => setQuantity(quantity + 1)}
+              className="px-3 py-2.5 text-gray-600 hover:bg-gray-50 transition-colors">
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Add to Cart / View in Cart */}
+          {cartQty > 0 ? (
+            <button onClick={() => useCartStore.getState().setCartDrawerOpen(true)}
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#29ac00] text-white text-sm font-semibold rounded-lg hover:bg-[#249000] transition-colors">
+              <ShoppingCart className="w-4 h-4" />
+              {t("product.view-cart", locale)} ({cartQty})
+            </button>
+          ) : (
+            <button onClick={addToCart} disabled={!product.inStock}
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#29ac00] text-white text-sm font-semibold rounded-lg hover:bg-[#249000] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+              <ShoppingCart className="w-4 h-4" />
+              {t("product.add-to-cart", locale)}
+            </button>
+          )}
+        </div>
+
+        {/* Buy Now */}
+        <button onClick={buyNow} disabled={!product.inStock}
+          className="w-full py-3 bg-[#ff6600] text-white text-sm font-semibold rounded-lg hover:bg-[#e55b00] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+          {t("product.buy-now", locale)}
+        </button>
+      </div>
+
+      {/* Related Products */}
       {related.length > 0 && (
-        <section className="mt-16">
-          <h2 className="text-xl font-bold text-text mb-6">{t("product.related", locale)}</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="px-4 pt-5 pb-4">
+          <h2 className="text-sm font-bold text-gray-900 mb-3">{t("product.related", locale)}</h2>
+          <div className="grid grid-cols-2 gap-3">
             {related.map((p) => (
-              <ProductCard key={p.id} product={p} locale={locale} />
+              <ProductCard key={p.id} product={p} locale={locale as any} />
             ))}
           </div>
-        </section>
+        </div>
       )}
     </div>
   );

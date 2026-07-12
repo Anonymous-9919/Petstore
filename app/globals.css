@@ -484,3 +484,13 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+.disable-scroll-bar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  background: transparent !important;
+}
+.disable-scroll-bar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
