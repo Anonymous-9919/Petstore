@@ -159,7 +159,7 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
           </span>
         </div>
 
-        {/* Quantity + Add to Cart - like source site */}
+        {/* Quantity + Buttons - like source site */}
         <div className="flex items-center gap-3 mb-4">
           {/* Quantity stepper */}
           <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
@@ -174,21 +174,22 @@ export default function ProductDetailClient({ product, related }: ProductDetailC
             </button>
           </div>
 
-          {/* Add to Cart / View in Cart */}
-          {cartQty > 0 ? (
-            <button onClick={() => useCartStore.getState().setCartDrawerOpen(true)}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#29ac00] text-white text-sm font-semibold rounded-lg hover:bg-[#249000] transition-colors">
-              <ShoppingCart className="w-4 h-4" />
-              {t("product.view-cart", locale)} ({cartQty})
-            </button>
-          ) : (
-            <button onClick={addToCart} disabled={!product.inStock}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#29ac00] text-white text-sm font-semibold rounded-lg hover:bg-[#249000] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
-              <ShoppingCart className="w-4 h-4" />
-              {t("product.add-to-cart", locale)}
-            </button>
-          )}
+          {/* Add to Cart - always visible */}
+          <button onClick={addToCart} disabled={!product.inStock}
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#29ac00] text-white text-sm font-semibold rounded-lg hover:bg-[#249000] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+            <ShoppingCart className="w-4 h-4" />
+            {t("product.add-to-cart", locale)}
+          </button>
         </div>
+
+        {/* In-cart indicator */}
+        {cartQty > 0 && (
+          <button onClick={() => useCartStore.getState().setCartDrawerOpen(true)}
+            className="w-full flex items-center justify-center gap-2 py-2 mb-4 text-sm text-[#29ac00] font-medium hover:underline">
+            <ShoppingCart className="w-4 h-4" />
+            {t("product.view-cart", locale)} ({cartQty})
+          </button>
+        )}
 
         {/* Buy Now */}
         <button onClick={buyNow} disabled={!product.inStock}

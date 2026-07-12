@@ -23,9 +23,8 @@ export function StoreShell({ children }: { children: ReactNode }) {
 
   return (
     <>
-      {/* Desktop: Split layout matching source site — left 41.6%, right 58.4% */}
+      {/* Desktop: Split layout — left 41.6%, right 58.4% */}
       <div className="hidden md:flex min-h-screen">
-        {/* Left: Store content */}
         <div className="w-full md:w-[41.6%] flex flex-col bg-[#f4f5f5] h-screen">
           <Header />
           <DeliveryBar />
@@ -36,14 +35,9 @@ export function StoreShell({ children }: { children: ReactNode }) {
           <DesktopBottomBar />
         </div>
 
-        {/* Right: Cover image (fixed, like source site) */}
         <div className="hidden md:block md:w-[58.4%] relative">
           <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#ff6600]">
-            <img
-              src="/images/site/cover.jpeg"
-              alt="Pet Store Kuwait"
-              className="w-full h-full object-cover"
-            />
+            <img src="/images/site/cover.jpeg" alt="Pet Store Kuwait" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
             <div className="absolute bottom-10 left-8 right-8 text-white">
               <img src="/logo.jpg" alt="Pet Store" className="h-14 w-auto object-contain mb-3 drop-shadow-lg" />
@@ -55,8 +49,10 @@ export function StoreShell({ children }: { children: ReactNode }) {
         </div>
       </div>
 
-      {/* Mobile: Full width */}
+      {/* Mobile: Full width with header and delivery bar */}
       <div className="md:hidden flex flex-col min-h-screen">
+        <Header />
+        <DeliveryBar />
         <main id="main-content" className="flex-1 pb-16">
           {children}
           <Footer />
