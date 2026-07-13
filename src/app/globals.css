@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-brand-orange: #ff6600;
+  --color-brand-orange-hover: #e65c00;
+  --color-brand-green: #2ECC71;
+  --color-brand-green-hover: #27AE60;
+  --color-brand-whatsapp: #29AC00;
+  --color-brand-whatsapp-light: #4FCE5D;
+
+  --color-store-bg: #F4F5F5;
+  --color-store-white: #FFFFFF;
+  --color-store-border: #DEDEDE;
+  --color-store-border-dark: #D4D5D4;
+  --color-store-border-separator: #DBDBDB;
+
+  --color-text-primary: rgba(0, 0, 0, 0.87);
+  --color-text-secondary: rgba(0, 0, 0, 0.54);
+  --color-text-muted: #999999;
+  --color-text-lighter: #ADADAD;
+  --color-text-dark: #333333;
+  --color-text-medium: #666666;
+  --color-text-green: #37AD49;
+  --color-text-black: #000000;
+
+  --font-family-sans: "Quicksand", "Cairo", sans-serif;
+  --font-family-cairo: "Cairo", sans-serif;
+  --font-family-quicksand: "Quicksand", sans-serif;
+
+  --shadow-fab: 0px 3px 12px rgba(0, 0, 0, 0.15);
+  --shadow-btn: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
+}
+
+:root {
+  --background: #F4F5F5;
+  --foreground: rgba(0, 0, 0, 0.87);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Quicksand", "Cairo", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+*::-webkit-scrollbar {
+  appearance: none;
+  width: 0;
+  height: 0;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.cut-text-two-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cut-text-two-lines-grid-view {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.grayBackground {
+  background-color: #F4F5F5;
+}
+
+.english-font {
+  font-family: "Quicksand", "Cairo", sans-serif;
+}
+
+.arabic-font {
+  font-family: "Cairo", "Quicksand", sans-serif;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out;
+}
